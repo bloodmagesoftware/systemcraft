@@ -1,36 +1,38 @@
 ---
-title: Welcome to Starlight
+title: Welcome to SystemCraft
 description: Get started building your docs site with Starlight.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Learn the basics of software development!
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Intro
+      link: /start_here/intro/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+    - text: Bloodmage Software
+      link: https://bloodmagesoftware.de
       icon: external
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid } from "@astrojs/starlight/components";
 
-## Next steps
+## Our approach
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
+  <Card title="Interactive explanations" icon="puzzle">
+    Our explanation sections provide a hands-on approach to learning. We have
+    interactive examples whenever possible.
+  </Card>
+  <Card title="Exercises" icon="pencil">
+    There are a lot of example projects for you to put into practice what you've
+    learned. We provide example solutions for each exercise you can look at and
+    compare it with your solution.
+  </Card>
+  <Card title="Setup" icon="laptop">
+    We provide tools you can use right from your browser to ensure a simple
+    start. If you want to run everything on you own computer, we provide a setup
+    guide you can follow to get up and running as fast as possible.
+  </Card>
 </CardGrid>
