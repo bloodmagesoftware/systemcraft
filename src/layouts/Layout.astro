@@ -1,0 +1,20 @@
+---
+import "../styles/global.css";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+
+export type Props = {
+	class?: string;
+};
+---
+
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{SITE_TITLE}</title>
+		<meta name="description" content={SITE_DESCRIPTION} />
+	</head>
+	<body class={Astro.props.class}>
+		<slot />
+	</body>
+</html>

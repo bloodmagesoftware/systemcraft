@@ -1,6 +1,8 @@
 ---
 title: Version Control Systems
 description: What even is a version control system?
+authors:
+  - frank_mayer
 slug: version_control_systems/intro
 ---
 
@@ -11,7 +13,6 @@ It is used by developers, but also by engineers, artists, and more.
 There are different types of VCSs for different purposes.
 
 Different VCSs use different terminology. For example, Git uses the term "commit" to refer to a change (point in time in the history of a project), while Mercurial uses "changeset". However, the concepts are the same.
-We will use the following terminology:
 
 ## The Origin of Git
 
@@ -44,7 +45,7 @@ These platforms extend pure version control with crucial collaboration features:
 Both before and after Git, there have been many other VCSs.
 
 - [Perforce Helix Core](https://www.perforce.com/products/helix-core) (1995): A commercial, centralized VCS distinguished by high performance in large mono-repositories and fine-grained access control. It is widely used for video games.
-- [Subversion](https://subversion.apache.org/) (SVN, 2000): A centralized VCS from the Apache Software Foundation that versions directories and files, developed as a successor to CVS. It is rarely used anymore.
+- [Subversion](https://subversion.apache.org/) (SVN, 2000): A centralized VCS from the Apache Software Foundation that versions directories and files, developed as a successor to [CVS](https://savannah.nongnu.org/projects/cvs). It is rarely used anymore.
 - [Mercurial](https://www.mercurial-scm.org/) (2005): A distributed VCS written in Python, emphasizing simplicity, speed, and consistency of the command-line interface. It is rarely used anymore, except at Meta.
 - [Fossil](https://fossil-scm.org/) (2007): An integrated system implemented in C by D. Richard Hipp (author of SQLite) with a built-in bug tracker, wiki, and web interface in a single program. The entire repository is stored in a single SQLite database. It is rarely used, except for SQLite.
 - [Pijul](https://pijul.org/) (2014): An experimental, distributed VCS in Rust, based on the theory of patches, aiming for simpler merges and better formal correctness. It is rarely used.
@@ -109,8 +110,6 @@ gitGraph
     branch feature-2
     checkout feature-2
     commit id: "change 6"
-    checkout main
-    commit id: "change 7"
 ```
 
 When a feature is finished, it can me merged back into the main branch.

@@ -1,0 +1,47 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+	const courses = await getCollection("courses");
+	const authors = await getCollection("authors");
+
+	return authors.map((author) => ({
+		params: { slug: author.id },
+		props: {
+			author: author,
+			courses: courses.filter((c) =>
+				c.data.authors.find((a) => a.id === author.id),
+			),
+		},
+	}));
+}
+
+type Props = {
+	author: CollectionEntry<"authors">;
+	courses: CollectionEntry<"courses">[];
+};
+
+const { courses, author } = Astro.props;
+---
+
+<Layout>
+	<h1>{author.data.name}</h1>
+	<ul>
+		{
+			courses.map((course) => (
+				<li>
+					<a
+						href={`/courses/${course.slug}`}
+						class="block px-2 py-1 bg-gray-600 hover:bg-gray-700"
+					>
+						<h2 class="text-xl md:text-2xl font-bold leading-tight">
+							{course.data.title}
+						</h2>
+						<p class="text-balance">{course.data.description}</p>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</Layout>

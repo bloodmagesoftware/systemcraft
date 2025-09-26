@@ -1,0 +1,17 @@
+---
+import { getCollection } from "astro:content";
+
+const courses = await getCollection("courses");
+---
+
+<h1>Courses</h1>
+
+<ul>
+	{
+		courses.map((course) => (
+			<li>
+				<a href={`/courses/${course.slug}`}>{course.data.title}</a>
+			</li>
+		))
+	}
+</ul>
