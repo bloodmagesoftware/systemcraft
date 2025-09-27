@@ -1,24 +1,152 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+import HammerIcon from "../components/Hammer.astro";
+import LightIcon from "../components/Light.astro";
+import WrenchIcon from "../components/Wrench.astro";
+import BookmarkIcon from "../components/Bookmark.astro";
+import heroImage from "../assets/hero.svg";
 ---
 
 <Layout>
-	<a href="/course">Get started</a>
-	<h2>Our approach</h2>
-	<ul>
-		<li>
-			Our explanation sections provide a hands-on approach to learning. We have
-			interactive examples whenever possible.
-		</li>
-		<li>
-			There are a lot of example projects for you to put into practice what
-			you've learned. We provide example solutions for each exercise you can
-			look at and compare it with your solution.
-		</li>
-		<li>
-			We provide tools you can use right from your browser to ensure a simple
-			start. If you want to run everything on you own computer, we provide a
-			setup guide you can follow to get up and running as fast as possible.
-		</li>
-	</ul>
+	<section
+		class="hero relative h-lvh w-full bg-emerald-700 bg-cover bg-bottom bg-no-repeat"
+		style={`background-image: url(${heroImage.src})`}
+	>
+		<div class="absolute right-2 bottom-4 block text-xs text-slate-800">
+			Illustration by <a
+				href="https://unsplash.com/@hilmyfarras?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+				>Hilmy Farras</a
+			> on <a
+				href="https://unsplash.com/illustrations/a-castle-sits-atop-a-grassy-hill-under-clouds-Y-l0IoynGj0?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+				>Unsplash</a
+			>
+		</div>
+		<a
+			href="/courses"
+			class="group absolute top-2/3 left-8 z-10 h-10 w-50 lg:top-1/2"
+		>
+			<svg
+				class="h-full w-full transition-transform group-hover:rotate-4"
+				viewBox="0 0 500 100"
+				xml:space="preserve"
+			>
+				<path
+					d="M0,0 l5.583,93.459 l464.417,6.541 l30,-47 l-32,-51 l-468,-2Z"
+					style="fill:#987056;"></path>
+				<g transform="matrix(2.45,0,0,2.45,-144,-16)">
+					<text
+						class="font-serif"
+						x="67.253px"
+						y="33.064px"
+						style="font-size:1.5rem; fill:#1f150f;">Road to success</text
+					>
+				</g>
+			</svg>
+		</a>
+		<div
+			class="relative top-[calc(66%_-_1rem)] left-28 block h-[calc(33%_+_1rem)] w-4 lg:top-[calc(50%_-_1rem)] lg:h-[calc(50%_+_1rem)]"
+			style={{
+				backgroundColor: "#987056",
+			}}
+		>
+		</div>
+		<div class="absolute top-1/4 block h-fit w-full">
+			<h1
+				class="mb-8 w-full text-center font-serif text-4xl font-bold text-gray-700 md:text-5xl"
+			>
+				SystemCraft
+			</h1>
+			<p class="w-full text-center text-balance text-gray-700 md:text-xl">
+				Take a look at our courses, they are all free.
+			</p>
+			<a
+				class="cta mx-auto mt-8 block w-fit rounded border-3 border-solid border-cyan-700 bg-sky-950 px-8 py-2 font-serif shadow-2xl shadow-blue-700/40 md:text-2xl"
+				href="/courses">Get started</a
+			>
+		</div>
+		<div class="absolute right-0 bottom-0 left-0 block h-3 bg-slate-700">
+			<div
+				class="mx-auto block h-3 w-3 scale-[3] rotate-45 border-3 border-solid border-cyan-600 bg-cyan-500"
+			>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-24">
+		<h2 class="mb-24 text-center font-serif text-2xl">Our approach</h2>
+		<ul
+			class="mx-auto grid w-full max-w-5xl grid-cols-1 gap-x-8 gap-y-16 px-2 md:grid-cols-2"
+		>
+			{
+				[
+					{
+						icon: HammerIcon,
+						title: "Hands-on approach",
+						text: "We provide a hands-on approach to learning with interactive examples whenever possible.",
+					},
+					{
+						icon: LightIcon,
+						title: "Example solutions",
+						text: "There are a lot of example projects for you to put into practice what you've learned. We provide example solutions for each exercise you can look at and compare it with your solution.",
+					},
+					{
+						icon: WrenchIcon,
+						title: "Setup guides",
+						text: "We provide setup guides for all required software to get up and running as fast as possible.",
+					},
+					{
+						icon: BookmarkIcon,
+						title: "Account",
+						text: "Login using GitHub or Google to save your progress and settings.",
+					},
+				].map((item) => (
+					<li class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-x-4 gap-y-2">
+						<item.icon class="mb-2 block h-6 w-6 fill-cyan-500" />
+						<span class="text-xl">{item.title}</span>
+						<span class="col-span-2 block text-balance text-gray-400">
+							{item.text}
+						</span>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<Footer />
 </Layout>
+
+<style>
+	.cta {
+		position: relative;
+		overflow: clip;
+	}
+	.cta:not(:hover)::before {
+		translate: -1rem 0;
+	}
+	.cta:not(:hover)::after {
+		translate: 1rem 0;
+	}
+	.cta::before,
+	.cta::after {
+		transition: translate 100ms ease-out;
+		width: 0px;
+		height: 0px;
+		border-style: solid;
+		position: absolute;
+		display: block;
+		content: "";
+		top: 1rem;
+		z-index: 1;
+	}
+	.cta::before {
+		border-color: transparent transparent transparent var(--color-cyan-700);
+		border-width: 0.5rem 0 0.5rem 0.4rem;
+		left: 0;
+	}
+	.cta::after {
+		border-color: transparent var(--color-cyan-700) transparent transparent;
+		border-width: 0.5rem 0.4rem 0.5rem 0;
+		right: 0;
+	}
+</style>
