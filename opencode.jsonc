@@ -5,6 +5,6 @@
 		"AGENTS.md",
 		"astro.config.mjs",
 		"package.json",
-		"firebase.json"
-	]
+		"firebase.json",
+	],
 }

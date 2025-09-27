@@ -10,20 +10,20 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://systemcraft.com",
+	site: "https://systemcraft.com",
 
-  integrations: [
-      expressiveCode(),
-      mdx({ extendMarkdownConfig: true }),
-      sitemap(),
+	integrations: [
+		expressiveCode(),
+		mdx({ extendMarkdownConfig: true }),
+		sitemap(),
 	],
 
-  markdown: {
-      syntaxHighlight: { excludeLangs: ["mermaid"] },
-      rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
+	markdown: {
+		syntaxHighlight: { excludeLangs: ["mermaid"] },
+		rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
 	},
 
-  vite: {
-    plugins: [tailwindcss()],
-  },
+	vite: {
+		plugins: [tailwindcss()],
+	},
 });
