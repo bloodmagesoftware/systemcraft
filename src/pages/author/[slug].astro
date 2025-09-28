@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import Layout from "../../layouts/Base.astro";
+import Layout from "../../layouts/App.astro";
+import Footer from "../../components/Footer.astro";
 
 export async function getStaticPaths() {
 	const courses = await getCollection("courses");
@@ -26,22 +27,26 @@ const { courses, author } = Astro.props;
 ---
 
 <Layout>
-	<h1>{author.data.name}</h1>
-	<ul>
-		{
-			courses.map((course) => (
-				<li>
+	<div
+		class="mx-auto w-full max-w-7xl"
+		style={{ minHeight: "calc(100lvh - 24rem)" }}
+	>
+		<h1 class="mb-8 font-serif text-2xl font-bold">{author.data.name}</h1>
+		<div
+			class="grid grid-cols-1 gap-4 px-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+		>
+			{
+				courses.map((course) => (
 					<a
+						class="rounded border border-solid border-gray-700 px-4 py-2"
 						href={`/courses/${course.slug}`}
-						class="block bg-gray-600 px-2 py-1 hover:bg-gray-700"
 					>
-						<h2 class="text-xl leading-tight font-bold md:text-2xl">
-							{course.data.title}
-						</h2>
-						<p class="text-balance">{course.data.description}</p>
+						<h3 class="font-serif font-bold">{course.data.title}</h3>
+						<p class="text-balance text-gray-400">{course.data.description}</p>
 					</a>
-				</li>
-			))
-		}
-	</ul>
+				))
+			}
+		</div>
+	</div>
+	<Footer />
 </Layout>
