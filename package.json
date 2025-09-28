@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
-		"prebuild": "playwright install --with-deps chromium",
+		"prebuild": "playwright install",
 		"preview": "astro preview",
 		"astro": "astro",
 		"test": "firebase emulators:exec --only firestore \"vitest --run\"",
