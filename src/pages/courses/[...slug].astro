@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
-import Layout from "../../layouts/Base.astro";
+import Layout from "../../layouts/App.astro";
+import Footer from "../../components/Footer.astro";
 
 export async function getStaticPaths() {
 	const courses = await getCollection("courses");
@@ -26,26 +27,29 @@ const { course, authors } = Astro.props;
 const { Content } = await render(course);
 ---
 
-<Layout class="prose">
-	<h1>
-		{course.data.title}
-	</h1>
-	<p class="flex w-fit flex-row">
-		<span>Authors:&nbsp;</span>
-		{
-			authors.map((author, i) =>
-				i > 0 ? (
-					<>
-						<span>,&nbsp;</span>
+<Layout>
+	<div class="prose mx-auto max-w-5xl">
+		<h1>
+			{course.data.title}
+		</h1>
+		<p class="flex w-fit flex-row">
+			<span>Authors:&nbsp;</span>
+			{
+				authors.map((author, i) =>
+					i > 0 ? (
+						<>
+							<span>,&nbsp;</span>
+							<a href={`/author/${author.id}`}>{author.data.name}</a>
+						</>
+					) : (
 						<a href={`/author/${author.id}`}>{author.data.name}</a>
-					</>
-				) : (
-					<a href={`/author/${author.id}`}>{author.data.name}</a>
-				),
-			)
-		}
-	</p>
-	<article>
-		<Content />
-	</article>
+					),
+				)
+			}
+		</p>
+		<article>
+			<Content />
+		</article>
+	</div>
+	<Footer />
 </Layout>

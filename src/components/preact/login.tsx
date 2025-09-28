@@ -66,10 +66,10 @@ export default function LoginWidget({ className }: Props) {
 	}
 
 	return (
-		<div className={className}>
+		<>
 			<div className="flex items-center gap-3">
 				{loading ? (
-					<div className="rounded cursor-pointer bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100">
+					<div className="rounded cursor-pointer bg-gray-900 px-4 py-2.5 text-sm font-medium text-gray-100">
 						Loading...
 					</div>
 				) : isLoggedIn ? (
@@ -183,7 +183,7 @@ export default function LoginWidget({ className }: Props) {
 					</div>
 				</div>
 			)}
-		</div>
+		</>
 	);
 }
 
