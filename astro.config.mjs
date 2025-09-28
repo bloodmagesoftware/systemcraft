@@ -2,11 +2,13 @@
 
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
+import { defineConfig } from "astro/config";
 import rehypeMermaid from "rehype-mermaid";
 
 import tailwindcss from "@tailwindcss/vite";
+
+import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,6 +18,7 @@ export default defineConfig({
 		expressiveCode(),
 		mdx({ extendMarkdownConfig: true }),
 		sitemap(),
+		preact({ compat: true, include: ["**/preact/*"] }),
 	],
 
 	markdown: {

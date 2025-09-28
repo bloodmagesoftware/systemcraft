@@ -1,8 +1,8 @@
-import * as fs from "node:fs"; // Need to read your rules file
 import {
 	initializeTestEnvironment,
 	type RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
+import * as fs from "node:fs"; // Need to read your rules file
 import { afterAll, beforeAll, expect, test } from "vitest";
 import firebaseConfig from "../firebase.json";
 

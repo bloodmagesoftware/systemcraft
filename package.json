@@ -13,8 +13,11 @@
 		"fmt": "prettier --write ."
 	},
 	"dependencies": {
+		"@astrojs/preact": "^4.1.1",
+		"@tanstack/react-query": "^5.90.2",
 		"astro": "^5.6.1",
 		"firebase": "^12.3.0",
+		"preact": "^10.27.2",
 		"tailwindcss": "^4.1.13"
 	},
 	"devDependencies": {
@@ -30,10 +33,15 @@
 		"playwright": "^1.55.1",
 		"prettier": "^3.6.2",
 		"prettier-plugin-astro": "^0.14.1",
+		"prettier-plugin-organize-imports": "^4.3.0",
 		"prettier-plugin-tailwindcss": "^0.6.14",
 		"rehype-mermaid": "^3.0.0",
 		"sharp": "^0.34.2",
 		"vitest": "^3.2.4"
+	},
+	"overrides": {
+		"react": "npm:@preact/compat@latest",
+		"react-dom": "npm:@preact/compat@latest"
 	},
 	"prettier": {
 		"trailingComma": "all",
@@ -42,7 +50,8 @@
 		"useTabs": true,
 		"plugins": [
 			"prettier-plugin-astro",
-			"prettier-plugin-tailwindcss"
+			"prettier-plugin-tailwindcss",
+			"prettier-plugin-organize-imports"
 		]
 	}
 }
