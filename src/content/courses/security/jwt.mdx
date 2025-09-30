@@ -1,0 +1,211 @@
+---
+title: JWT
+description: JSON Web Tokens
+authors:
+  - frank_mayer
+---
+
+## Authentication vs Authorization
+
+Authentication: Use login credentials to verify the identity of a user.
+
+Authorization: Ensure that a user is the same that succedded the authentication.
+
+## Session Token
+
+The server creates a session token, stores it in it's own database, and sends it to the client.
+When the client makes a request, it attaches the session token to the request.
+The server can then check if the session token exists in its own database and if it is valid (not expired or revoked).
+
+## JWT
+
+JSON Web Tokens are not stored on the server, only on the client.
+The server can verify that the token was created by the server (and not manipulated by the client) by using cryptographic signing.
+
+## Encoding
+
+A JWT needs to have information like user and expiration encoded in it.
+This is required to check if the token is valid and which user is authenticated with it.
+This information is stored as a JSON object.
+
+**Header**
+
+The technical part is stored as the header.
+This header contains information about how the token is encoded and signed.
+This information will be readable in clear text.
+
+```json
+{
+	"alg": "HS256",
+	"typ": "JWT"
+}
+```
+
+**Payload**
+
+The actual information about the user and expiration is stored in the payload.
+You can add any information here, but you should not add sensitive information like passwords.
+This information will be readable in clear text.
+
+```json
+{
+	"user": "john_doe",
+	"exp": 1618873482
+}
+```
+
+**Signature**
+
+```python
+signingInput = base64url(header) + "." + base64url(payload); # eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFsaWNlIiwiaWF0IjoxNzU5MjMxMTA0fQ
+signature = Base64UrlEncode(Hash(key=secret, msg=signingInput) ); # 8o4F716WohixwlxjqhzQqPhR5EwajtDkBEh8b9zfXWMq2h0dGYoI0hp-PYf-NYvm0TFUSggkTsV6zfrT_ombCw
+
+token = signingInput + "." + signature; # eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFsaWNlIiwiaWF0IjoxNzU5MjMxMTA0fQ.8o4F716WohixwlxjqhzQqPhR5EwajtDkBEh8b9zfXWMq2h0dGYoI0hp-PYf-NYvm0TFUSggkTsV6zfrT_ombCw
+```
+
+### Algorithms
+
+| Algorithm | Description                     |
+| --------- | ------------------------------- |
+| HS256     | HMAC using SHA-256              |
+| HS384     | HMAC using SHA-384              |
+| HS512     | HMAC using SHA-512              |
+| RS256     | RSASSA-PKCS1-v1_5 using SHA-256 |
+| RS384     | RSASSA-PKCS1-v1_5 using SHA-384 |
+| RS512     | RSASSA-PKCS1-v1_5 using SHA-512 |
+| ES256     | ECDSA using P-256               |
+
+## Example
+
+```typescript
+import { createHmac, timingSafeEqual } from "crypto";
+
+interface JWTHeader {
+	alg: string;
+	typ: string;
+}
+
+interface JWTPayload {
+	[key: string]: unknown;
+}
+
+const SECRET = "my-super-secret-key-for-hs512";
+
+function base64UrlEncode(buffer: Buffer): string {
+	return buffer
+		.toString("base64")
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_")
+		.replace(/=/g, "");
+}
+
+function base64UrlDecode(str: string): Buffer {
+	const base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+	const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+	return Buffer.from(base64 + padding, "base64");
+}
+
+function createJWT(payload: JWTPayload): string {
+	const header: JWTHeader = {
+		alg: "HS512",
+		typ: "JWT",
+	};
+
+	if (header.alg !== "HS512") {
+		throw new Error("Only HS512 algorithm is supported");
+	}
+
+	const encodedHeader = base64UrlEncode(
+		Buffer.from(JSON.stringify(header), "utf8"),
+	);
+
+	const encodedPayload = base64UrlEncode(
+		Buffer.from(JSON.stringify(payload), "utf8"),
+	);
+
+	const signingInput = `${encodedHeader}.${encodedPayload}`;
+
+	const signature = createHmac("sha512", SECRET).update(signingInput).digest();
+
+	const encodedSignature = base64UrlEncode(signature);
+
+	return `${signingInput}.${encodedSignature}`;
+}
+
+function verifyJWT(token: string): boolean {
+	const parts = token.split(".");
+	if (parts.length !== 3) {
+		return false;
+	}
+
+	const [encodedHeader, encodedPayload, encodedSignature] = parts;
+
+	try {
+		const header: JWTHeader = JSON.parse(
+			base64UrlDecode(encodedHeader).toString("utf8"),
+		);
+
+		if (header.alg !== "HS512") {
+			throw new Error("Only HS512 algorithm is supported");
+		}
+
+		const signingInput = `${encodedHeader}.${encodedPayload}`;
+
+		const expectedSignature = createHmac("sha512", SECRET)
+			.update(signingInput)
+			.digest();
+
+		const providedSignature = base64UrlDecode(encodedSignature);
+
+		if (expectedSignature.length !== providedSignature.length) {
+			return false;
+		}
+
+		return timingSafeEqual(
+			new Uint8Array(expectedSignature),
+			new Uint8Array(providedSignature),
+		);
+	} catch {
+		return false;
+	}
+}
+
+function decodePayload(token: string): JWTPayload {
+	const parts = token.split(".");
+	if (parts.length !== 3) {
+		throw new Error("Invalid JWT format");
+	}
+
+	const [, encodedPayload] = parts;
+
+	try {
+		const payloadJSON = base64UrlDecode(encodedPayload).toString("utf8");
+		return JSON.parse(payloadJSON) as JWTPayload;
+	} catch (error) {
+		throw new Error("Failed to decode payload");
+	}
+}
+
+const payload: JWTPayload = {
+	sub: "1234567890",
+	name: "Alice",
+	iat: Math.floor(Date.now() / 1000),
+};
+
+const jwt = createJWT(payload);
+console.log("Generated JWT:");
+console.log(jwt);
+console.log();
+
+const isValid = verifyJWT(jwt);
+console.log("Verification result:", isValid);
+console.log();
+
+const decoded = decodePayload(jwt);
+console.log("Decoded payload:");
+console.log(decoded);
+console.log();
+
+const tamperedJWT = "XXXXX" + jwt.slice(5); // Replace first 5 characters with "XXXXX" to simulate tampering
+console.log("Tampered JWT verification:", verifyJWT(tamperedJWT));
+```
