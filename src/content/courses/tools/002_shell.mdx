@@ -1,0 +1,149 @@
+---
+title: Shell
+description: Shell
+authors:
+    - frank_mayer
+slug: tools/shell
+---
+
+## What is a shell?
+
+A shell is a program that runs in a terminal emulator.
+It reads user input from the keyboard (and sometimes the mouse) and executes other programs on behalf of the user.
+Every computer has a default shell.
+
+PowerShell is the default shell on Windows but cmd.exe is still supported (and is the default shell on older versions of Windows).
+
+Unix systems (Linux, macOS, ...) are a bit more complicated.
+One can assume that the default shell is POSIX-compliant.
+This is a standard that is implemented by multiple shells like Bash, Dash, Zsh, and so on.
+Many Unix users differentiate between the default shell and the interactive shell.
+A default shell should always be POSIX-compliant to be able to run scripts as expected.
+The interactive shell can be more exotic.
+Nushell for example is a popular interactive shell that is not POSIX-compliant.
+
+## Standard streams
+
+Programs need to read input from the user and write output to the screen.
+
+This is done by using standard streams.
+
+Standard streams are the standard input (stdin), standard output (stdout), and standard error (stderr).
+
+You can think of this as a text editor.
+You can type text into it (stdin).
+The program can write text into it (stdout and stderr).
+
+You and the program share this text editor called the terminal emulator to communicate with each other.
+
+Just like a text editor, the terminal emulator has a cursor.
+The cursor is the position, where the next character will be written.
+You can't move this cursor by clicking somewhere on the screen.
+
+You might have noticed that most shells support moving this cursor by using the arrow keys.
+This is a feature of the shell itself, not the terminal emulator.
+
+Let's take a look at an example:
+
+`$` is the command prompt.
+It is usually written to stdout by the shell.
+
+The blue text is the user input.
+The keyboard input is picked up by the terminal emulator and written to stdin of the shell.
+
+The shell runs the program `myproject` and connects its standard streams to the terminal emulator.
+
+The next green text was written by the progam `myproject`.
+It writes a confirmation message to stdout.
+This is the expected output of the program.
+
+The red text was also written by the program `myproject`.
+But it is unexpected output.
+The program want to inform the user that their configuration file is malformed.
+This has nothing to do with the action that the user intended.
+This output could cause automated scripts to fail or misbehave.
+Therefore it is written to stderr.
+
+```ansi
+[32m$ [34mmyproject new[0m
+[32mproject created successfully[0m
+[31mmalformed user configuration[0m
+```
+
+## stdin
+
+Standard input is is a stream that represents the **user's input**.
+It is usually the letters pressed by the user on their keyboard.
+
+The terminal emulator can add additional inputs like mouse clicks or files (drag and drop).
+
+## stdout
+
+Standard output is a stream that represents the **expected output** of the program.
+
+The terminal emulator acts like a display for for whatever gets written to stdout.
+stdout contains regular text, those are printed to the screen.
+
+Many terminal emulators support additional kinds of outputs (not just text).
+Simple sounds (beeps) can be played.
+Using ANSI escape codes, the terminal can give the program more GUI-like features like:
+
+- Colors
+- Cursor positioning
+- Scrolling
+- Text formatting
+
+## stderr
+
+Standard error is a stream that represents the output of the program.
+It is usually the screen of the terminal emulator.
+
+The terminal emulator can also add additional outputs like beeps or sound.
+
+## Pipes
+
+Pipes are used to chain multiple programs together.
+They are used to connect the output of one program to the input of another program.
+Pipes are usually represented by the `|` character.
+
+For example, the following command prints the contents of the file `file1` to the screen:
+
+```bash
+cat file1
+```
+
+The command `grep` can search for patterns in the output of the command `cat` by chaining them together:
+
+```bash
+cat file1 | grep pattern
+```
+
+The shell connects the stdout of `cat` not to the terminal emulator but to the stdin of `grep`.
+
+## Task
+
+Write a low-level shell.
+
+You decide about the shell's features, capabilities, and behavior.
+
+The following features are mandatory:
+
+- Command prompt (show current working directory, followed by user input).
+- When user runs the command (typically by pressing enter), clear the input and execute the command.
+- Basic piping (e.g. `cat file1 | grep pattern`), you can use any operator you want.
+- Built-in commands (e.g. `cd`, `echo`, `exit`), you can use any names you want.
+
+Expand the shell with optional features. Examples:
+
+- History (e.g. pressing up arrow to retrieve previous commands)
+- Prompt customization (e.g. showing the current git branch)
+- Tab completion (e.g. pressing tab after `cd` to autocomplete the directories)
+- Expand the types like [PowerShell](https://learn.microsoft.com/en-us/powershell/) or [Nushell](https://www.nushell.sh/).  
+  e.g. Write your own `ls` as a built-in and treat it's output as a list of File objects.  
+  For this, you need to support multiple types of input and outputs for commands (e.g. strings, lists, objects, etc.)
+  Then make every type auto-convertable to a string (to still support regular programs that expect strings).
+
+### Tipp
+
+You will need a programming language that supports raw user input to be able to implement more advanced features like tab completion and history.
+
