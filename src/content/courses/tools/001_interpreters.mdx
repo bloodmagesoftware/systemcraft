@@ -58,307 +58,259 @@ When we encounter a space, we store the token we built so far and start a new on
 
 <LexerVisualization
     client:load
-	input="4 - 7 + 3 * 14"
+	input="42 - 37 * 103"
 	steps={[
 		{ currentIndex: -1, currentChar: "", tokens: [], currentToken: "" },
 		{ currentIndex: 0, currentChar: "4", tokens: [], currentToken: "4" },
-		{
-			currentIndex: 1,
-			currentChar: " ",
-			tokens: [{ type: "NUMBER", value: "4" }],
-			currentToken: "",
-		},
         {
-			currentIndex: 2,
-			currentChar: "-",
-			tokens: [{ type: "NUMBER", value: "4" }],
-			currentToken: "-",
-		},
+            currentIndex: 1,
+            currentChar: "2",
+            tokens: [],
+            currentToken: "42",
+        },
         {
-			currentIndex: 3,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-			],
-			currentToken: "",
-		},
+            currentIndex: 2,
+            currentChar: " ",
+            tokens: [{ type: "NUMBER", value: "42" }],
+            currentToken: "",
+        },
         {
-			currentIndex: 4,
-			currentChar: "7",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-			],
-			currentToken: "7",
-		},
+            currentIndex: 3,
+            currentChar: "-",
+            tokens: [{ type: "NUMBER", value: "42" }, { type: "OPERATOR", value: "-" }],
+            currentToken: "",
+        },
         {
-			currentIndex: 5,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-			],
-			currentToken: "",
-		},
+            currentIndex: 4,
+            currentChar: " ",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+            ],
+            currentToken: "",
+        },
         {
-			currentIndex: 6,
-			currentChar: "+",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-			],
-			currentToken: "+",
-		},
+            currentIndex: 5,
+            currentChar: "3",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+            ],
+            currentToken: "3",
+        },
         {
-			currentIndex: 7,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-			],
-			currentToken: "",
-		},
+            currentIndex: 6,
+            currentChar: "7",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+            ],
+            currentToken: "37",
+        },
         {
-			currentIndex: 8,
-			currentChar: "3",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-			],
-			currentToken: "3",
-		},
+            currentIndex: 7,
+            currentChar: " ",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+            ],
+            currentToken: "",
+        },
         {
-			currentIndex: 9,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-			],
-			currentToken: "",
-		},
+            currentIndex: 8,
+            currentChar: "*",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "",
+        },
         {
-			currentIndex: 10,
-			currentChar: "*",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-			],
-			currentToken: "*",
-		},
+            currentIndex: 9,
+            currentChar: " ",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "",
+        },
         {
-			currentIndex: 11,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-                { type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-			],
-			currentToken: "",
-		},
+            currentIndex: 10,
+            currentChar: "1",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "1",
+        },
         {
-			currentIndex: 12,
-			currentChar: "1",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-                { type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-			],
-			currentToken: "1",
-		},
+            currentIndex: 11,
+            currentChar: "0",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "10",
+        },
         {
-			currentIndex: 13,
-			currentChar: "4",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-                { type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-			],
-			currentToken: "14",
-		},
+            currentIndex: 12,
+            currentChar: "3",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "103",
+        },
         {
-			currentIndex: 14,
-			currentChar: null,
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-                { type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-				{ type: "NUMBER", value: "14" },
-			],
-			currentToken: "",
-            },
+            currentIndex: 13,
+            currentChar: null,
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+                { type: "NUMBER", value: "103" },
+            ],
+            currentToken: "",
+        },
         ]}
 />
 
 The "split by space" rule works for this case, because there is a space between each token.
 But it's not always like this.
-Someone might write the same expression like this: `4 - 7+ 3 *14`.
+Someone might write the same expression like this: `42- 37 *103`.
 
-In this case, we would get wrong tokens: `4`, `-`, `7+`, `3`, `*14`.
+In this case, we would get wrong tokens: `42-`, `37`, `*103`.
 This makes no sense, right?
 
 For us humans, it's easy to understand the expression, even though it's not formatted well.
-We know that a operator like `*` can never be part of a number.
+We know that an operator like `*` can never be part of a number.
 We need to teach our lexer to do the same.
 
 We need to split when we encounter a space, but also when we encounter a operator.
 
 <LexerVisualization
     client:load
-	input="4 - 7+ 3 *14"
+	input="42- 37 *103"
 	steps={[
 		{ currentIndex: -1, currentChar: "", tokens: [], currentToken: "" },
 		{ currentIndex: 0, currentChar: "4", tokens: [], currentToken: "4" },
 		{
 			currentIndex: 1,
-			currentChar: " ",
-			tokens: [{ type: "NUMBER", value: "4" }],
-			currentToken: "",
+			currentChar: "2",
+			tokens: [],
+			currentToken: "42",
 		},
 		{
 			currentIndex: 2,
 			currentChar: "-",
-			tokens: [{ type: "NUMBER", value: "4" }],
-			currentToken: "-",
-		},
-		{
-			currentIndex: 3,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-			],
+			tokens: [{ type: "NUMBER", value: "42" }, { type: "OPERATOR", value: "-" }],
 			currentToken: "",
 		},
-		{
-			currentIndex: 4,
-			currentChar: "7",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-			],
-			currentToken: "7",
-		},
-		{
-			currentIndex: 5,
-			currentChar: "+",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-			],
-			currentToken: "+",
-		},
-		{
-			currentIndex: 6,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-			],
-			currentToken: "",
-		},
-		{
-			currentIndex: 7,
-			currentChar: "3",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-			],
-			currentToken: "3",
-		},
-		{
-			currentIndex: 8,
-			currentChar: " ",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-			],
-			currentToken: "",
-		},
-		{
-			currentIndex: 9,
-			currentChar: "*",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-			],
-			currentToken: "*",
-		},
-		{
-			currentIndex: 10,
-			currentChar: "1",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-			],
-			currentToken: "1",
-		},
-		{
-			currentIndex: 11,
-			currentChar: "4",
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-			],
-			currentToken: "14",
-		},
-		{
-			currentIndex: 12,
-			currentChar: null,
-			tokens: [
-				{ type: "NUMBER", value: "4" },
-				{ type: "OPERATOR", value: "-" },
-				{ type: "NUMBER", value: "7" },
-				{ type: "OPERATOR", value: "+" },
-				{ type: "NUMBER", value: "3" },
-				{ type: "OPERATOR", value: "*" },
-				{ type: "NUMBER", value: "14" },
-			],
-			currentToken: "",
-		},
+        {
+            currentIndex: 3,
+            currentChar: " ",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+            ],
+            currentToken: "",
+        },
+        {
+            currentIndex: 4,
+            currentChar: "3",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+            ],
+            currentToken: "3",
+        },
+        {
+            currentIndex: 5,
+            currentChar: "7",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+            ],
+            currentToken: "37",
+        },
+        {
+            currentIndex: 6,
+            currentChar: " ",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+            ],
+            currentToken: "",
+        },
+        {
+            currentIndex: 7,
+            currentChar: "*",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "",
+        },
+        {
+            currentIndex: 8,
+            currentChar: "1",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "1",
+        },
+        {
+            currentIndex: 9,
+            currentChar: "0",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "10",
+        },
+        {
+            currentIndex: 10,
+            currentChar: "3",
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+            ],
+            currentToken: "103",
+        },
+        {
+            currentIndex: 11,
+            currentChar: null,
+            tokens: [
+                { type: "NUMBER", value: "42" },
+                { type: "OPERATOR", value: "-" },
+                { type: "NUMBER", value: "37" },
+                { type: "OPERATOR", value: "*" },
+                { type: "NUMBER", value: "103" },
+            ],
+            currentToken: "",
+        },
 	]}
 />
 
