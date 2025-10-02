@@ -361,3 +361,83 @@ We need to split when we encounter a space, but also when we encounter a operato
 		},
 	]}
 />
+
+### Parsing
+
+The next step is to take the tokens and build an AST.
+
+This is where the grammar comes into play.
+We need rules that define how the tokens can be combined to form a valid expression.
+
+We also need to define a order in which the rules need to be applied.
+For example, in math, we need to do multiplication and division before addition and subtraction.
+
+You can also define if `4 3` is valid (`4 * 3`) or invalid (missing operator between two numbers).
+
+The expected AST for `4 - 7 + 3 * 14` would look like this:
+
+```mermaid
+graph TD
+  plus["add"] 
+  minus["subtract"]
+  times["multiply"]
+  n4["4"]
+  n7["7"]
+  n3["3"]
+  n14["14"]
+
+  plus --> minus
+  plus --> times
+  minus --> n4
+  minus --> n7
+  times --> n3
+  times --> n14
+```
+
+To build the AST, you need to iterate over the tokens and push them into a tree.
+
+You can build sub-trees.
+This would be one way of handling the order of operations.
+First, build sub-trees for multiplications and divisions.
+Then, combine those sub-trees into one tree by joining them with additions and subtractions.
+
+### Running the AST
+
+This is where the interpreter differs from a compiler.
+The interpreter needs to run the AST.
+
+(We could also compile the AST into machine code and run that. It would still be an interpreter.)
+
+The AST is a tree (as the name suggests).
+It has a root node.
+
+We start with the root node and run it.
+The root node is an addition node.
+It runs its left and right child nodes and adds their numeric values together.
+
+This implies the execution of the subtraction- and the multiplication-nodes.
+They are required to get the numeric values for those nodes.
+
+The subtraction node takes its left and right child nodes and subtracts the right child from the left child.
+Since 4 and 7 are already numeric values, we can subtract them directly.  
+The multiplication node takes its left and right child nodes and multiplies them together.
+Since 3 and 14 are also numeric values, we can multiply them directly.
+
+```mermaid
+graph TD
+  plus["add"] 
+  nm3["-3"]
+  n42["42"]
+
+  plus --> nm3
+  plus --> n42
+```
+
+Now the addition node can be completed.
+
+## Task
+
+Implement this interpreter for mathematical expressions.
+
+You need to at least support addition, subtraction, multiplication, and division.
+You can add more operators or brackets if you want.
