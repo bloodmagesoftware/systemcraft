@@ -25,7 +25,7 @@ Object.keys(grouped)
 ---
 
 <Layout>
-	<div class="pb-16" style={{ minHeight: "calc(100lvh - 21.5rem)" }}>
+	<main class="px-2 pb-16" style={{ minHeight: "calc(100lvh - 21.5rem)" }}>
 		<h1 class="hidden">Courses</h1>
 		{
 			Object.entries(grouped).map(([group, items]) => (
@@ -50,6 +50,6 @@ Object.keys(grouped)
 				</section>
 			))
 		}
-	</div>
+	</main>
 	<Footer />
 </Layout>

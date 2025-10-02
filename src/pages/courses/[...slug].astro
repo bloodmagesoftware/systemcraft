@@ -28,7 +28,7 @@ const { Content } = await render(course);
 ---
 
 <Layout>
-	<div class="prose mx-auto max-w-5xl">
+	<main class="prose mx-auto max-w-5xl px-2">
 		<h1>
 			{course.data.title}
 		</h1>
@@ -50,6 +50,6 @@ const { Content } = await render(course);
 		<article>
 			<Content />
 		</article>
-	</div>
+	</main>
 	<Footer />
 </Layout>
