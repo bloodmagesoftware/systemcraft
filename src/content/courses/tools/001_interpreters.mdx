@@ -4,6 +4,8 @@ description: An introduction to compilers and interpreters
 authors:
   - frank_mayer
 slug: tools/interpreters
+examples:
+  - math-interpreter-c
 ---
 
 ## Compiler vs. Interpreter
@@ -57,134 +59,137 @@ When we encounter a number, we append it to the current token.
 When we encounter a space, we store the token we built so far and start a new one.
 
 <LexerVisualization
-    client:load
+	client:load
 	input="42 - 37 * 103"
 	steps={[
 		{ currentIndex: -1, currentChar: "", tokens: [], currentToken: "" },
 		{ currentIndex: 0, currentChar: "4", tokens: [], currentToken: "4" },
-        {
-            currentIndex: 1,
-            currentChar: "2",
-            tokens: [],
-            currentToken: "42",
-        },
-        {
-            currentIndex: 2,
-            currentChar: " ",
-            tokens: [{ type: "NUMBER", value: "42" }],
-            currentToken: "",
-        },
-        {
-            currentIndex: 3,
-            currentChar: "-",
-            tokens: [{ type: "NUMBER", value: "42" }, { type: "OPERATOR", value: "-" }],
-            currentToken: "",
-        },
-        {
-            currentIndex: 4,
-            currentChar: " ",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 5,
-            currentChar: "3",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-            ],
-            currentToken: "3",
-        },
-        {
-            currentIndex: 6,
-            currentChar: "7",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-            ],
-            currentToken: "37",
-        },
-        {
-            currentIndex: 7,
-            currentChar: " ",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 8,
-            currentChar: "*",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 9,
-            currentChar: " ",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 10,
-            currentChar: "1",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "1",
-        },
-        {
-            currentIndex: 11,
-            currentChar: "0",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "10",
-        },
-        {
-            currentIndex: 12,
-            currentChar: "3",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "103",
-        },
-        {
-            currentIndex: 13,
-            currentChar: null,
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-                { type: "NUMBER", value: "103" },
-            ],
-            currentToken: "",
-        },
-        ]}
+		{
+			currentIndex: 1,
+			currentChar: "2",
+			tokens: [],
+			currentToken: "42",
+		},
+		{
+			currentIndex: 2,
+			currentChar: " ",
+			tokens: [{ type: "NUMBER", value: "42" }],
+			currentToken: "",
+		},
+		{
+			currentIndex: 3,
+			currentChar: "-",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 4,
+			currentChar: " ",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 5,
+			currentChar: "3",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "3",
+		},
+		{
+			currentIndex: 6,
+			currentChar: "7",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "37",
+		},
+		{
+			currentIndex: 7,
+			currentChar: " ",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 8,
+			currentChar: "*",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 9,
+			currentChar: " ",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 10,
+			currentChar: "1",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "1",
+		},
+		{
+			currentIndex: 11,
+			currentChar: "0",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "10",
+		},
+		{
+			currentIndex: 12,
+			currentChar: "3",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "103",
+		},
+		{
+			currentIndex: 13,
+			currentChar: null,
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+				{ type: "NUMBER", value: "103" },
+			],
+			currentToken: "",
+		},
+	]}
 />
 
 The "split by space" rule works for this case, because there is a space between each token.
@@ -201,7 +206,7 @@ We need to teach our lexer to do the same.
 We need to split when we encounter a space, but also when we encounter a operator.
 
 <LexerVisualization
-    client:load
+	client:load
 	input="42- 37 *103"
 	steps={[
 		{ currentIndex: -1, currentChar: "", tokens: [], currentToken: "" },
@@ -215,102 +220,105 @@ We need to split when we encounter a space, but also when we encounter a operato
 		{
 			currentIndex: 2,
 			currentChar: "-",
-			tokens: [{ type: "NUMBER", value: "42" }, { type: "OPERATOR", value: "-" }],
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
 			currentToken: "",
 		},
-        {
-            currentIndex: 3,
-            currentChar: " ",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 4,
-            currentChar: "3",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-            ],
-            currentToken: "3",
-        },
-        {
-            currentIndex: 5,
-            currentChar: "7",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-            ],
-            currentToken: "37",
-        },
-        {
-            currentIndex: 6,
-            currentChar: " ",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 7,
-            currentChar: "*",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "",
-        },
-        {
-            currentIndex: 8,
-            currentChar: "1",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "1",
-        },
-        {
-            currentIndex: 9,
-            currentChar: "0",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "10",
-        },
-        {
-            currentIndex: 10,
-            currentChar: "3",
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-            ],
-            currentToken: "103",
-        },
-        {
-            currentIndex: 11,
-            currentChar: null,
-            tokens: [
-                { type: "NUMBER", value: "42" },
-                { type: "OPERATOR", value: "-" },
-                { type: "NUMBER", value: "37" },
-                { type: "OPERATOR", value: "*" },
-                { type: "NUMBER", value: "103" },
-            ],
-            currentToken: "",
-        },
+		{
+			currentIndex: 3,
+			currentChar: " ",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 4,
+			currentChar: "3",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "3",
+		},
+		{
+			currentIndex: 5,
+			currentChar: "7",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+			],
+			currentToken: "37",
+		},
+		{
+			currentIndex: 6,
+			currentChar: " ",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 7,
+			currentChar: "*",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "",
+		},
+		{
+			currentIndex: 8,
+			currentChar: "1",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "1",
+		},
+		{
+			currentIndex: 9,
+			currentChar: "0",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "10",
+		},
+		{
+			currentIndex: 10,
+			currentChar: "3",
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+			],
+			currentToken: "103",
+		},
+		{
+			currentIndex: 11,
+			currentChar: null,
+			tokens: [
+				{ type: "NUMBER", value: "42" },
+				{ type: "OPERATOR", value: "-" },
+				{ type: "NUMBER", value: "37" },
+				{ type: "OPERATOR", value: "*" },
+				{ type: "NUMBER", value: "103" },
+			],
+			currentToken: "",
+		},
 	]}
 />
 
@@ -330,7 +338,7 @@ The expected AST for `4 - 7 + 3 * 14` would look like this:
 
 ```mermaid
 graph TD
-  plus["add"] 
+  plus["add"]
   minus["subtract"]
   times["multiply"]
   n4["4"]
@@ -371,13 +379,13 @@ This implies the execution of the subtraction- and the multiplication-nodes.
 They are required to get the numeric values for those nodes.
 
 The subtraction node takes its left and right child nodes and subtracts the right child from the left child.
-Since 4 and 7 are already numeric values, we can subtract them directly.  
+Since 4 and 7 are already numeric values, we can subtract them directly.
 The multiplication node takes its left and right child nodes and multiplies them together.
 Since 3 and 14 are also numeric values, we can multiply them directly.
 
 ```mermaid
 graph TD
-  plus["add"] 
+  plus["add"]
   nm3["-3"]
   n42["42"]
 

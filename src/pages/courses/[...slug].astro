@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import Layout from "../../layouts/App.astro";
 import Footer from "../../components/Footer.astro";
+import { examples } from "../../content/examples";
 
 export async function getStaticPaths() {
 	const courses = await getCollection("courses");
@@ -47,9 +48,21 @@ const { Content } = await render(course);
 				)
 			}
 		</p>
-		<article>
-			<Content />
-		</article>
+		<Content />
+		{
+			course.data.examples ? (
+				<>
+					<h2>Examples</h2>
+					{course.data.examples.map((example) =>
+						example in examples ? (
+							<a href={examples[example]}>{example}</a>
+						) : (
+							<span>{example}</span>
+						),
+					)}
+				</>
+			) : null
+		}
 	</main>
 	<Footer />
 </Layout>

@@ -18,6 +18,7 @@
 		"astro": "^5.6.1",
 		"firebase": "^12.3.0",
 		"preact": "^10.27.2",
+		"tailwind-merge": "^3.3.1",
 		"tailwindcss": "^4.1.13"
 	},
 	"devDependencies": {
@@ -28,6 +29,7 @@
 		"@firebase/testing": "^0.20.11",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.13",
+		"archiver": "^7.0.1",
 		"astro-expressive-code": "^0.41.3",
 		"mermaid": "^11.12.0",
 		"playwright": "^1.55.1",
@@ -37,6 +39,7 @@
 		"prettier-plugin-tailwindcss": "^0.6.14",
 		"rehype-mermaid": "^3.0.0",
 		"sharp": "^0.34.2",
+		"vite": "^7.1.9",
 		"vitest": "^3.2.4"
 	},
 	"overrides": {

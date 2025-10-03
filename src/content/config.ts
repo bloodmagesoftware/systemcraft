@@ -6,8 +6,7 @@ const courses = defineCollection({
 		title: z.string(),
 		description: z.string(),
 		authors: z.array(reference("authors")),
-		// pubDate: z.coerce.date(),
-		// updatedDate: z.coerce.date().optional(),
+		examples: z.array(z.string()).optional(),
 	}),
 });
 

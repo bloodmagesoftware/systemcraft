@@ -7,6 +7,7 @@ import { defineConfig } from "astro/config";
 import rehypeMermaid from "rehype-mermaid";
 
 import tailwindcss from "@tailwindcss/vite";
+import zipDirPlugin from "./scripts/vite-plugins/zipDirPlugin";
 
 import preact from "@astrojs/preact";
 
@@ -36,6 +37,12 @@ export default defineConfig({
 	},
 
 	vite: {
-		plugins: [tailwindcss()],
+		plugins: [
+			tailwindcss(),
+			zipDirPlugin({
+				root: "source/content/examples", // where your example dirs live
+				query: "zip", // import ?zip
+			}),
+		],
 	},
 });

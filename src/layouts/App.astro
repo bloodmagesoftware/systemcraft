@@ -1,9 +1,10 @@
 ---
 import Base from "./Base.astro";
+export type { Props } from "./Base.astro";
 import Header from "../components/Header.astro";
 ---
 
-<Base>
+<Base {...Astro.props}>
 	<Header />
 	<slot />
 </Base>
