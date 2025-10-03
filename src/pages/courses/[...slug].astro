@@ -52,14 +52,23 @@ const { Content } = await render(course);
 		{
 			course.data.examples ? (
 				<>
-					<h2>Examples</h2>
-					{course.data.examples.map((example) =>
-						example in examples ? (
-							<a href={examples[example]}>{example}</a>
-						) : (
-							<span>{example}</span>
-						),
-					)}
+					<h2>Example Solutions</h2>
+					<div class="flex flex-col gap-2">
+						{course.data.examples.map((example) =>
+							example in examples ? (
+								<a
+									class="rounded bg-gray-700 px-4 py-3 text-white no-underline hover:bg-gray-600"
+									href={examples[example].path}
+								>
+									{examples[example].title}
+								</a>
+							) : (
+								<span class="cursor-not-allowed rounded bg-gray-700 px-4 py-3 text-white">
+									{example}
+								</span>
+							),
+						)}
+					</div>
 				</>
 			) : null
 		}
