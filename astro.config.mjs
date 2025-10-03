@@ -12,7 +12,7 @@ import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://systemcraft.com",
+	site: "https://systemcraft.dev",
 
 	integrations: [
 		expressiveCode(),
