@@ -23,7 +23,16 @@ export default defineConfig({
 
 	markdown: {
 		syntaxHighlight: { excludeLangs: ["mermaid"] },
-		rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
+		rehypePlugins: [
+			[
+				rehypeMermaid,
+				{
+					strategy: "img-svg",
+					colorScheme: "dark",
+					mermaidConfig: { theme: "dark" },
+				},
+			],
+		],
 	},
 
 	vite: {
