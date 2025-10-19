@@ -1,55 +1,351 @@
 ---
 import { getCollection } from "astro:content";
-import Layout from "../../layouts/App.astro";
+import Layout from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+
+import * as Viz from "@viz-js/viz";
 
 const courses = await getCollection("courses");
 
-function slugToTitle(slug: string): string {
-	return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+// Utility
+const REM_PX = 16;
+const esc = (s: string) => String(s).replace(/"/g, '\\"');
+const hrefOf = (slug: string) => `/courses/${slug}`;
+
+// Build DOT (circo = circular), variable-size boxes with full titles
+const nodes: string[] = [];
+const edges: string[] = [];
+
+// Edges
+for (const c of courses) {
+	for (const d of c.data?.dependencies ?? []) {
+		const src = typeof d === "string" ? d : d?.id;
+		if (src) edges.push(`"${src}" -> "${c.slug}";`);
+	}
 }
 
-// Group courses by the first segment of the slug
-const grouped = courses.reduce((acc, course) => {
-	const key = slugToTitle(course.slug.split("/")[0]);
-	(acc[key] ||= []).push(course);
-	return acc;
-}, {});
+// Nodes
+for (const c of courses) {
+	const title = (c.data?.title ?? c.slug).trim();
+	const desc = (c.data?.description ?? title).toString().trim();
+	const href = hrefOf(c.slug);
+	nodes.push(
+		`"${c.slug}" [label="${esc(title)}", href="${esc(
+			href,
+		)}", tooltip="${esc(desc)}", target="_self"];`,
+	);
+}
 
-// sort lexicographically by slug
-Object.keys(grouped)
-	.sort()
-	.forEach((key) => {
-		grouped[key].sort((a, b) => a.filePath.localeCompare(b.filePath));
-	});
+const dot = `
+digraph G {
+  graph [layout=circo, dpi=96, bgcolor="transparent",
+         overlap=false, pack=true, packmode="graph",
+         packmargin=28, sep="+36", splines=true];
+
+  // Boxes grow to fit content (no fixed size)
+  node  [shape=box, fixedsize=false,
+         style="rounded",
+         margin="0.12,0.10",
+         // White stroke + text for dark theme
+         color="#ffffff", fontcolor="#ffffff", penwidth=2,
+         fontname="system-ui,Arial", fontsize=12];
+
+  edge  [color="#94a3b8", penwidth=2, arrowsize=0.8];
+
+  ${nodes.join("\n")}
+  ${edges.join("\n")}
+}
+`;
+
+const viz = await Viz.instance();
+let svg = viz.renderString(dot, { engine: "circo", format: "svg" });
+
+// Size SVG in rems and inject styling/hooks
+const m = svg.match(/<svg[^>]*\bwidth="([\d.]+)pt"\\s+height="([\d.]+)pt"/i);
+if (m) {
+	const ptToPx = (pt: number) => (pt * 96) / 72;
+	const wRem = (ptToPx(parseFloat(m[1])) / REM_PX).toFixed(3);
+	const hRem = (ptToPx(parseFloat(m[2])) / REM_PX).toFixed(3);
+	svg = svg
+		.replace(/\\swidth="[^"]*"/i, "")
+		.replace(/\\sheight="[^"]*"/i, "")
+		.replace(
+			/<svg/i,
+			`<svg style="width:${wRem}rem;height:${hRem}rem;display:block"`,
+		)
+		.replace(
+			/(<svg[^>]*>)/i,
+			`$1<style>
+        /* Typography inside nodes */
+        .node text {
+          fill: #ffffff !important;
+          font-size: var(--text-xs) !important;
+          font-family: var(--font-sans) !important;
+        }
+
+        /* White outlines for nodes on dark background */
+        .node polygon, .node rect, .node path, .node ellipse {
+          stroke: #ffffff !important;
+          stroke-width: 2 !important;
+        }
+
+        /* Edges should not interfere with hover/clicks on nodes */
+        g.edge path, g.edge polygon {
+          pointer-events: none !important;
+          fill: none !important;
+        }
+
+        /* Make the entire node interior hit-testable by default */
+        .node polygon, .node rect, .node ellipse {
+          fill: #ffffff !important;
+          fill-opacity: 0.001 !important;
+          pointer-events: all !important;
+        }
+
+        .node a { cursor: pointer }
+      </style>`,
+		);
+}
 ---
 
-<Layout>
-	<main class="px-2 pb-16" style={{ minHeight: "calc(100lvh - 21.5rem)" }}>
-		<h1 class="hidden">Courses</h1>
-		{
-			Object.entries(grouped).map(([group, items]) => (
-				<section class="mx-auto w-full max-w-7xl">
-					<h2 class="mt-6 mb-8 font-serif text-xl font-bold capitalize">
-						{group}
-					</h2>
-
-					<div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-4 px-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						{items.map((course) => (
-							<a
-								class="rounded border border-solid border-gray-700 px-4 py-2"
-								href={`/courses/${course.slug}`}
-							>
-								<h3 class="font-serif font-bold">{course.data.title}</h3>
-								<p class="text-balance text-gray-400">
-									{course.data.description}
-								</p>
-							</a>
-						))}
-					</div>
-				</section>
-			))
-		}
+<Layout
+	class="grid min-h-dvh grid-rows-[auto_1fr_auto] lg:fixed lg:inset-0 lg:h-dvh lg:w-dvw"
+>
+	<Header />
+	<main class="lg:overflow-hidden">
+		<div id="graph-wrap" class="hidden lg:relative lg:block">
+			<div
+				id="graph-host"
+				set:html={svg}
+				aria-label="Courses graph"
+				role="img"
+			/>
+			<div
+				id="graph-tip"
+				class="pointer-events-none fixed z-50 hidden max-w-sm rounded bg-slate-800/70 px-2 py-1 text-xs text-white shadow-lg ring-1 ring-black/30 backdrop-blur-md"
+				style="top:-9999px;left:-9999px"
+			>
+			</div>
+		</div>
+		<ul class="block lg:hidden">
+			{
+				courses.map((c) => (
+					<li>
+						<a class="block px-4 py-4" href={`/courses/${c.slug}`}>
+							<span class="block text-xl text-cyan-500 underline">
+								{c.data.title}
+							</span>
+							<span class="block text-pretty">{c.data.description}</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
 	</main>
-	<Footer />
+
+	<Footer class="lg:mt-0 lg:py-4" />
+
+	<script is:inline>
+		(() => {
+			const host = document.getElementById("graph-host");
+			const tip = document.getElementById("graph-tip");
+			if (!host || !tip) return;
+
+			const svgEl = host.querySelector("svg");
+			if (!svgEl) return;
+
+			const mainEl = document.querySelector("main");
+			if (!mainEl) return;
+
+			// 1) Read tooltip content from anchor's xlink:title/title (Graphviz),
+			//    else fall back to node <title>.
+			const nodes = svgEl.querySelectorAll("g.node");
+			nodes.forEach((g) => {
+				const a = g.querySelector("a");
+				let text =
+					(a && (a.getAttribute("xlink:title") || a.getAttribute("title"))) ||
+					"";
+				if (!text) {
+					const t = g.querySelector("title");
+					text = (t?.textContent || "").trim();
+				}
+				if (text) g.dataset.tip = text.trim();
+			});
+
+			// 2) Remove ALL native SVG tooltips (titles/attributes) so no stray "G"
+			//    or other browser tooltips appear anywhere.
+			svgEl.querySelectorAll("title").forEach((t) => t.remove());
+			svgEl
+				.querySelectorAll("[title]")
+				.forEach((el) => el.removeAttribute("title"));
+			// Remove xlink:title on any element (namespace-safe best-effort)
+			svgEl.querySelectorAll("*").forEach((el) => {
+				if (el.hasAttribute("xlink:title")) el.removeAttribute("xlink:title");
+				// In some renderers it may be namespaced:
+				try {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					el.removeAttributeNS &&
+						el.removeAttributeNS("http://www.w3.org/1999/xlink", "title");
+				} catch {}
+			});
+
+			// 3) Ensure the shape interior is hit-testable across browsers
+			nodes.forEach((g) => {
+				const shape = g.querySelector("polygon, rect, ellipse, path");
+				if (shape) {
+					shape.setAttribute("fill", "#ffffff");
+					shape.setAttribute("fill-opacity", "0.001");
+					shape.setAttribute("pointer-events", "all");
+				}
+			});
+
+			// Tooltip helpers
+			const show = (text, x, y) => {
+				tip.textContent = text;
+				tip.classList.remove("hidden");
+				position(x, y);
+			};
+
+			const hide = () => {
+				tip.classList.add("hidden");
+			};
+
+			const position = (clientX, clientY) => {
+				const pad = 12;
+				let x = clientX + pad;
+				let y = clientY + pad;
+
+				tip.style.left = x + "px";
+				tip.style.top = y + "px";
+
+				const rect = tip.getBoundingClientRect();
+				const vw = window.innerWidth;
+				const vh = window.innerHeight;
+
+				if (x + rect.width + 8 > vw) x = clientX - rect.width - pad;
+				if (y + rect.height + 8 > vh) y = clientY - rect.height - pad;
+
+				tip.style.left = Math.max(4, x) + "px";
+				tip.style.top = Math.max(4, y) + "px";
+			};
+
+			// Use mouseover/mouseout (they bubble) so any child under the node triggers
+			nodes.forEach((g) => {
+				const tipText = g.dataset.tip;
+				if (!tipText) return;
+
+				g.addEventListener("mouseover", (e) => {
+					show(tipText, e.clientX, e.clientY);
+				});
+
+				g.addEventListener("mousemove", (e) => {
+					position(e.clientX, e.clientY);
+				});
+
+				g.addEventListener("mouseout", (e) => {
+					const to = e.relatedTarget;
+					if (!(to instanceof Node) || !g.contains(to)) hide();
+				});
+
+				g.addEventListener("click", (e) => {
+					if (mouseDown && Date.now() - mouseDown > 300) {
+						e.preventDefault();
+						return;
+					}
+					hide();
+				});
+			});
+
+			// Hide on escape or window blur/scroll
+			window.addEventListener("keydown", (e) => {
+				if (e.key === "Escape") hide();
+			});
+			window.addEventListener("scroll", hide, { passive: true });
+			window.addEventListener("blur", hide);
+
+			// pan and zoom svg
+			let mouseDown = 0;
+			let x = 0;
+			let y = 0;
+			let scale = 1;
+			mainEl.addEventListener(
+				"wheel",
+				(e) => {
+					e.preventDefault();
+					console.log("wheel deltaY", e.deltaY, "mode", e.deltaMode);
+					scale = clamp(0.1, scale + getScaleDeltaFromWheel(e, scale), 1);
+					svgEl.style.scale = scale.toString();
+				},
+				{ passive: false },
+			);
+			mainEl.addEventListener(
+				"mousedown",
+				() => {
+					mouseDown = Date.now();
+				},
+				{ passive: true },
+			);
+			window.addEventListener(
+				"click",
+				() => {
+					setTimeout(() => {
+						mouseDown = 0;
+					}, 1);
+				},
+				{ passive: true },
+			);
+			window.addEventListener(
+				"mouseup",
+				() => {
+					setTimeout(() => {
+						mouseDown = 0;
+					}, 1);
+				},
+				{ passive: true },
+			);
+			window.addEventListener(
+				"mousemove",
+				(e) => {
+					if (!mouseDown) return;
+					x += e.movementX;
+					y += e.movementY;
+					svgEl.style.translate = `${x}px ${y}px`;
+				},
+				{ passive: true },
+			);
+			function getScaleDeltaFromWheel(e, currentScale) {
+				const LINE_PX = 16; // approximate px per "line" unit
+				const UNIT_DIV = 300; // larger => smaller effect per wheel motion
+
+				// normalize deltaY to pixel-like units
+				let delta = e.deltaY;
+				if (e.deltaMode === 1) delta *= LINE_PX;
+				else if (e.deltaMode === 2) delta *= window.innerHeight;
+
+				// wheel up (delta < 0) -> zoom in (positive add); wheel down -> zoom out
+				const sign = Math.sign(-delta) || 0;
+				const mag = Math.abs(delta);
+
+				// map magnitude to a smooth fractional change in (0,1)
+				const u = mag / UNIT_DIV;
+				const frac = 1 - Math.exp(-u);
+
+				// make additive change proportional to currentScale for a multiplicative feel
+				return sign * currentScale * frac;
+			}
+			function clamp(min, val, max) {
+				return Math.min(Math.max(val, min), max);
+			}
+			{
+				// pan to center
+				const svgRect = svgEl.getBoundingClientRect();
+				const mainRect = mainEl.getBoundingClientRect();
+				x = mainRect.width / 2 - svgRect.width / 2;
+				y = mainRect.height / 2 - svgRect.height / 2;
+				svgEl.style.translate = `${x}px ${y}px`;
+			}
+		})();
+	</script>
 </Layout>

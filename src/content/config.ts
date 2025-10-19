@@ -7,6 +7,8 @@ const courses = defineCollection({
 		description: z.string(),
 		authors: z.array(reference("authors")),
 		examples: z.array(z.string()).optional(),
+		dependencies: z.array(reference("courses")).optional(),
+		categories: z.array(z.string()).optional(),
 	}),
 });
 

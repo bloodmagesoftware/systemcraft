@@ -1,9 +1,8 @@
 ---
 title: Interpreter
-description: An introduction to compilers and interpreters
+description: An interpreter is a program that reads high-level source code and immediately carries out the instructions, translating and executing them step‑by‑step.
 authors:
   - frank_mayer
-slug: tools/interpreters
 examples:
   - math-interpreter-c
   - math-interpreter-ts
@@ -53,7 +52,7 @@ To group those characters together, we need to define a set of rules, how groups
 Most programming languages split by whitespace (space, tab, newline, etc.).
 Let's take a look at this with a simple example for Math:
 
-import LexerVisualization from "../../../components/preact/lexer-visualization.tsx";
+import LexerVisualization from "../../components/preact/lexer-visualization.tsx";
 
 We can build tokens while reading the source code.
 When we encounter a number, we append it to the current token.

@@ -2,7 +2,13 @@
 
 :root {
 	color-scheme: dark;
-	@apply bg-gray-800 accent-cyan-500;
+	@apply bg-gray-800 text-white accent-cyan-500;
+}
+
+html,
+body,
+main {
+	overflow-x: hidden;
 }
 
 @view-transition {

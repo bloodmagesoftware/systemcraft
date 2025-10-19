@@ -1,15 +1,17 @@
 ---
 title: Shell
-description: Shell
+description: A shell is a user interface that lets users interact with an operating system by entering commands. It parses and executes those commands, manages program execution and I/O, and often provides scripting to automate tasks.
 authors:
   - frank_mayer
-slug: tools/shell
+dependencies:
+  - interpreters
 ---
 
 ## What is a shell?
 
 A shell is a program that runs in a terminal emulator.
-It reads user input from the keyboard (and sometimes the mouse) and executes other programs on behalf of the user.
+It reads user input from the keyboard (and sometimes the mouse) and executes other programs on behalf of the user as an [interpreter](/courses/tools/interpreters/).
+
 Every computer has a default shell.
 
 PowerShell is the default shell on Windows but cmd.exe is still supported (and is the default shell on older versions of Windows).
@@ -112,7 +114,7 @@ For example, the following command prints the contents of the file `file1` to th
 cat file1
 ```
 
-The command `grep` can search for patterns in the output of the command `cat` by chaining them together:
+The program `grep` can search for patterns in the output of the program `cat` by chaining them together:
 
 ```bash
 cat file1 | grep pattern
@@ -138,8 +140,8 @@ Expand the shell with optional features. Examples:
 - History (e.g. pressing up arrow to retrieve previous commands)
 - Prompt customization (e.g. showing the current git branch)
 - Tab completion (e.g. pressing tab after `cd` to autocomplete the directories)
-- Expand the types like [PowerShell](https://learn.microsoft.com/en-us/powershell/) or [Nushell](https://www.nushell.sh/).  
-  e.g. Write your own `ls` as a built-in and treat it's output as a list of File objects.  
+- Expand the types like [PowerShell](https://learn.microsoft.com/en-us/powershell/) or [Nushell](https://www.nushell.sh/).
+  e.g. Write your own `ls` as a built-in and treat it's output as a list of File objects.
   For this, you need to support multiple types of input and outputs for commands (e.g. strings, lists, objects, etc.)
   Then make every type auto-convertable to a string (to still support regular programs that expect strings).
 

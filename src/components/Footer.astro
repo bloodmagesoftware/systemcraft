@@ -1,4 +1,11 @@
-<footer class="mt-16 w-full bg-gray-900 py-24">
+---
+import { twMerge } from "tailwind-merge";
+export interface Props {
+	class?: string;
+}
+---
+
+<footer class={twMerge("w-full bg-gray-900 mt-16 py-24", Astro.props.class)}>
 	<a href="/rss.xml" class="mx-auto block w-fit text-cyan-500 underline"
 		>Courses RSS Feed</a
 	>

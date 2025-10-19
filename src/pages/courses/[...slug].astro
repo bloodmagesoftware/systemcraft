@@ -15,16 +15,26 @@ export async function getStaticPaths() {
 			authors: course.data.authors.map((a) =>
 				authors.find((b) => b.id === a.id),
 			),
+			dependencies:
+				course.data.dependencies
+					?.map((d) => {
+						// `c.id` contains the file extensein, `d.id` does not
+						// `c.slug` is equivalent to `c.id` but without the file extension
+						// therefore is `c.slug` equivalent to `d.id`
+						return courses.find((c) => c.slug === d.id);
+					})
+					?.filter(Boolean) ?? [],
 		},
 	}));
 }
 
 type Props = {
 	course: CollectionEntry<"courses">;
+	dependencies: Array<CollectionEntry<"courses">>;
 	authors: CollectionEntry<"authors">[];
 };
 
-const { course, authors } = Astro.props;
+const { course, authors, dependencies } = Astro.props;
 const { Content } = await render(course);
 ---
 
@@ -48,6 +58,25 @@ const { Content } = await render(course);
 				)
 			}
 		</p>
+		{
+			dependencies.length > 0 ? (
+				<p class="flex w-fit flex-row">
+					<span>Dependencies:&nbsp;</span>
+					{dependencies.map((c, i) => {
+						return i > 0 ? (
+							<>
+								<span>,&nbsp;</span>
+								<a href={`/courses/${c.slug}`}>{c.data.title}</a>
+							</>
+						) : (
+							<>
+								<a href={`/courses/${c.slug}`}>{c.data.title}</a>
+							</>
+						);
+					})}
+				</p>
+			) : null
+		}
 		<Content />
 		{
 			course.data.examples ? (
