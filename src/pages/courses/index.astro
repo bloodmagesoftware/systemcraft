@@ -13,6 +13,41 @@ const REM_PX = 16;
 const esc = (s: string) => String(s).replace(/"/g, '\\"');
 const hrefOf = (slug: string) => `/courses/${slug}`;
 
+// Tag color mapping (simple hash to hue)
+function hashToHue(str: string): number {
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) - hash + str.charCodeAt(i);
+		hash = hash & hash; // Convert to 32bit integer
+	}
+	return Math.abs(hash) % 360;
+}
+
+const tagColorMap = new Map<string, number>();
+tagColorMap.set("Fundamentals", 125);
+tagColorMap.set("Computer Science", 8);
+tagColorMap.set("DevOps", 50);
+tagColorMap.set("Backend", 200);
+for (const course of courses) {
+	for (const tag of course.data?.tags ?? []) {
+		if (!tagColorMap.has(tag)) {
+			tagColorMap.set(tag, hashToHue(tag));
+		}
+	}
+}
+
+// Build a map of course slug -> first tag hue for client-side coloring
+const courseTagHues = new Map<string, number>();
+for (const course of courses) {
+	const tags = course.data?.tags ?? [];
+	if (tags.length > 0) {
+		const hue = tagColorMap.get(tags[0]);
+		if (hue !== undefined) {
+			courseTagHues.set(course.slug, hue);
+		}
+	}
+}
+
 // Build DOT (circo = circular), variable-size boxes with full titles
 const nodes: string[] = [];
 const edges: string[] = [];
@@ -25,23 +60,36 @@ for (const c of courses) {
 	}
 }
 
+// Track unfinished courses for client-side styling
+const unfinishedCourses = new Set(
+	courses.filter((c) => c.data?.unfinished === true).map((c) => c.slug),
+);
+
 // Nodes
 for (const c of courses) {
 	const title = (c.data?.title ?? c.slug).trim();
 	const desc = (c.data?.description ?? title).toString().trim();
 	const href = hrefOf(c.slug);
-	nodes.push(
-		`"${c.slug}" [label="${esc(title)}", href="${esc(
-			href,
-		)}", tooltip="${esc(desc)}", target="_self"];`,
-	);
+	const isUnfinished = c.data?.unfinished === true;
+
+	// For unfinished courses, omit href to make them non-clickable
+	if (isUnfinished) {
+		nodes.push(`"${c.slug}" [label="${esc(title)}", tooltip="${esc(desc)}"];`);
+	} else {
+		nodes.push(
+			`"${c.slug}" [label="${esc(title)}", href="${esc(
+				href,
+			)}", tooltip="${esc(desc)}", target="_self"];`,
+		);
+	}
 }
 
 const dot = `
 digraph G {
-  graph [layout=circo, dpi=96, bgcolor="transparent",
-         overlap=false, pack=true, packmode="graph",
-         packmargin=28, sep="+36", splines=true];
+  graph [layout=neato, dpi=96, bgcolor="transparent",
+         overlap=scale, pack=true, packmode="graph",
+         packmargin=8, sep="+12", splines=true,
+         mode="KK", maxiter=500];
 
   // Boxes grow to fit content (no fixed size)
   node  [shape=box, fixedsize=false,
@@ -51,7 +99,7 @@ digraph G {
          color="#ffffff", fontcolor="#ffffff", penwidth=2,
          fontname="system-ui,Arial", fontsize=12];
 
-  edge  [color="#94a3b8", penwidth=2, arrowsize=0.8];
+  edge  [color="#94a3b8", penwidth=2, arrowsize=0.8, len=2.0];
 
   ${nodes.join("\n")}
   ${edges.join("\n")}
@@ -104,17 +152,34 @@ if (m) {
         }
 
         .node a { cursor: pointer }
+
+        /* Unfinished courses - 50% opacity and forbidden cursor */
+        g.unfinished {
+          cursor: not-allowed !important;
+        }
+        g.unfinished * {
+          cursor: not-allowed !important;
+        }
+        g.unfinished polygon,
+        g.unfinished rect,
+        g.unfinished ellipse,
+        g.unfinished path {
+          pointer-events: all !important;
+        }
       </style>`,
 		);
 }
 ---
 
 <Layout
-	class="grid min-h-dvh grid-rows-[auto_1fr_auto] lg:fixed lg:inset-0 lg:h-dvh lg:w-dvw"
+	class="grid min-h-dvh grid-rows-[auto_1fr_auto] pointer-fine:fixed pointer-fine:inset-0 pointer-fine:h-dvh pointer-fine:w-dvw"
 >
 	<Header />
-	<main class="lg:overflow-hidden">
-		<div id="graph-wrap" class="hidden lg:relative lg:block">
+	<main class="pointer-fine:overflow-hidden">
+		<div
+			id="graph-wrap"
+			class="hidden pointer-fine:relative pointer-fine:block"
+		>
 			<div
 				id="graph-host"
 				set:html={svg}
@@ -128,26 +193,80 @@ if (m) {
 			>
 			</div>
 		</div>
-		<ul class="block lg:hidden">
+		<ul class="block pointer-fine:hidden">
 			{
-				courses.map((c) => (
-					<li>
-						<a class="block px-4 py-4" href={`/courses/${c.slug}`}>
-							<span class="block text-xl text-cyan-500 underline">
-								{c.data.title}
-							</span>
-							<span class="block text-pretty">{c.data.description}</span>
-						</a>
-					</li>
-				))
+				courses.map((c) => {
+					const isUnfinished = c.data?.unfinished === true;
+					const tags = c.data?.tags ?? [];
+					return (
+						<li>
+							{isUnfinished ? (
+								<div class="block cursor-not-allowed px-4 py-4 opacity-50">
+									<span class="block text-xl text-cyan-500">
+										{c.data.title}
+									</span>
+									{tags.length > 0 && (
+										<div class="mt-1 flex flex-wrap gap-1.5">
+											{tags.map((tag) => {
+												const hue = tagColorMap.get(tag) ?? 200;
+												return (
+													<span
+														class="rounded-md px-2 py-0.5 text-xs font-medium"
+														style={`background-color: hsl(${hue}, 60%, 25%); color: hsl(${hue}, 70%, 65%);`}
+													>
+														{tag}
+													</span>
+												);
+											})}
+										</div>
+									)}
+									<span class="block text-pretty">{c.data.description}</span>
+								</div>
+							) : (
+								<a class="block px-4 py-4" href={`/courses/${c.slug}`}>
+									<span class="block text-xl text-cyan-500 underline">
+										{c.data.title}
+									</span>
+									{tags.length > 0 && (
+										<div class="mt-1 flex flex-wrap gap-1.5">
+											{tags.map((tag) => {
+												const hue = tagColorMap.get(tag) ?? 200;
+												return (
+													<span
+														class="rounded-md px-2 py-0.5 text-xs font-medium"
+														style={`background-color: hsl(${hue}, 60%, 25%); color: hsl(${hue}, 70%, 65%);`}
+													>
+														{tag}
+													</span>
+												);
+											})}
+										</div>
+									)}
+									<span class="block text-pretty">{c.data.description}</span>
+								</a>
+							)}
+						</li>
+					);
+				})
 			}
 		</ul>
 	</main>
 
-	<Footer class="lg:mt-0 lg:py-4" />
+	<Footer class="pointer-fine:mt-0 pointer-fine:py-4" />
 
-	<script is:inline>
+	<script
+		is:inline
+		define:vars={{
+			unfinishedCourses: Array.from(unfinishedCourses),
+			courseTagHues: Object.fromEntries(courseTagHues),
+		}}
+	>
 		(() => {
+			// check for @media (pointer: fine)
+			const mediaPointerFine = window.matchMedia("(pointer: fine)");
+			if (!mediaPointerFine.matches) {
+				return;
+			}
 			const host = document.getElementById("graph-host");
 			const tip = document.getElementById("graph-tip");
 			if (!host || !tip) return;
@@ -161,6 +280,52 @@ if (m) {
 			// 1) Read tooltip content from anchor's xlink:title/title (Graphviz),
 			//    else fall back to node <title>.
 			const nodes = svgEl.querySelectorAll("g.node");
+
+			// Apply unfinished class and colors to nodes based on their title/slug
+			nodes.forEach((g) => {
+				const titleEl = g.querySelector("title");
+				const slug = (titleEl?.textContent || "").trim();
+				if (unfinishedCourses.includes(slug)) {
+					g.classList.add("unfinished");
+				}
+
+				// Apply tag-based colors
+				const hue = courseTagHues[slug];
+				if (hue !== undefined) {
+					// Color the node outline and text with medium lightness (65%)
+					const nodeColor = `hsl(${hue}, 70%, 65%)`;
+					const shapes = g.querySelectorAll("polygon, rect, ellipse, path");
+					shapes.forEach((shape) => {
+						shape.setAttribute("stroke", nodeColor);
+					});
+					const textEls = g.querySelectorAll("text");
+					textEls.forEach((text) => {
+						text.setAttribute("fill", nodeColor);
+					});
+				}
+			});
+			// Color incoming edges based on target node's first tag
+			const edges = svgEl.querySelectorAll("g.edge");
+			edges.forEach((edge) => {
+				const titleEl = edge.querySelector("title");
+				const edgeTitle = (titleEl?.textContent || "").trim();
+				// Edge title format is "source->target"
+				const match = edgeTitle.match(/^(.+)->(.+)$/);
+				if (match) {
+					const targetSlug = match[2].trim();
+					const hue = courseTagHues[targetSlug];
+					if (hue !== undefined) {
+						// Color edge with lightness between node (65%) and background: ~45%
+						const edgeColor = `hsl(${hue}, 70%, 45%)`;
+						const paths = edge.querySelectorAll("path, polygon");
+						paths.forEach((path) => {
+							path.setAttribute("stroke", edgeColor);
+							path.setAttribute("fill", edgeColor);
+						});
+					}
+				}
+			});
+
 			nodes.forEach((g) => {
 				const a = g.querySelector("a");
 				let text =
@@ -345,6 +510,8 @@ if (m) {
 				x = mainRect.width / 2 - svgRect.width / 2;
 				y = mainRect.height / 2 - svgRect.height / 2;
 				svgEl.style.translate = `${x}px ${y}px`;
+				scale = 0.5;
+				svgEl.style.scale = scale.toString();
 			}
 		})();
 	</script>

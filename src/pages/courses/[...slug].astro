@@ -40,43 +40,45 @@ const { Content } = await render(course);
 
 <Layout>
 	<main class="prose mx-auto max-w-5xl px-2">
-		<h1>
-			{course.data.title}
-		</h1>
-		<p class="flex w-fit flex-row">
-			<span>Authors:&nbsp;</span>
-			{
-				authors.map((author, i) =>
-					i > 0 ? (
-						<>
-							<span>,&nbsp;</span>
-							<a href={`/author/${author.id}`}>{author.data.name}</a>
-						</>
-					) : (
-						<a href={`/author/${author.id}`}>{author.data.name}</a>
-					),
-				)
-			}
-		</p>
-		{
-			dependencies.length > 0 ? (
-				<p class="flex w-fit flex-row">
-					<span>Dependencies:&nbsp;</span>
-					{dependencies.map((c, i) => {
-						return i > 0 ? (
+		<section class="mb-16">
+			<h1>
+				{course.data.title}
+			</h1>
+			<p class="flex w-fit flex-row">
+				<span>Authors:&nbsp;</span>
+				{
+					authors.map((author, i) =>
+						i > 0 ? (
 							<>
 								<span>,&nbsp;</span>
-								<a href={`/courses/${c.slug}`}>{c.data.title}</a>
+								<a href={`/author/${author.id}`}>{author.data.name}</a>
 							</>
 						) : (
-							<>
-								<a href={`/courses/${c.slug}`}>{c.data.title}</a>
-							</>
-						);
-					})}
-				</p>
-			) : null
-		}
+							<a href={`/author/${author.id}`}>{author.data.name}</a>
+						),
+					)
+				}
+			</p>
+			{
+				dependencies.length > 0 ? (
+					<p class="flex w-fit flex-row">
+						<span>Assumed knowledge:&nbsp;</span>
+						{dependencies.map((c, i) => {
+							return i > 0 ? (
+								<>
+									<span>,&nbsp;</span>
+									<a href={`/courses/${c.slug}`}>{c.data.title}</a>
+								</>
+							) : (
+								<>
+									<a href={`/courses/${c.slug}`}>{c.data.title}</a>
+								</>
+							);
+						})}
+					</p>
+				) : null
+			}
+		</section>
 		<Content />
 		{
 			course.data.examples ? (

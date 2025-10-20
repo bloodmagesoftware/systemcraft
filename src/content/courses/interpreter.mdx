@@ -3,6 +3,8 @@ title: Interpreter
 description: An interpreter is a program that reads high-level source code and immediately carries out the instructions, translating and executing them step‑by‑step.
 authors:
   - frank_mayer
+tags:
+  - Computer Science
 examples:
   - math-interpreter-c
   - math-interpreter-ts
@@ -20,7 +22,7 @@ An interpreter on the other hand takes code in a source format and executes it.
 One example would be Python, which is a interpreted programming language.
 Interpreters need to be installed on the computer that wants to run the code.
 
-There are also hybrid approaches like [Just-in-time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation) (short JIT).
+There are also hybrid approaches like [Just-in-time compilation](/courses/jit) (short JIT).
 Those are interpreters (need to be installed) that compile parts of the source code piece by piece as it is executed.
 Those compiled pieces are then stored and executed.
 When a piece is already compiled, it can be executed without compiling it again.
@@ -31,16 +33,9 @@ We will focus on interpreters for now.
 
 ## How to read source code?
 
-The first thing every kind of compiler/interpreter does is to read the source code.
-There are two main ways of doing this:
+The first thing every kind of compiler/interpreter does is to read the source code into an Abstract Syntax Tree (AST).
 
-- Abstract Syntax Tree (AST)
-- Sea of Nodes
-
-The Sea of Nodes is a more advanced way we will cover in a later chapter.
-
-The AST approach is slower but easier to understand and more versatile.
-This method has two parts:
+This operation has two parts:
 
 ### Lexical Analysis / Tokenization
 

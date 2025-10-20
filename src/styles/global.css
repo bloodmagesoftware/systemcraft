@@ -5,6 +5,8 @@
 	@apply bg-gray-800 text-white accent-cyan-500;
 }
 
+@custom-variant pointer-fine (@media (pointer: fine));
+
 html,
 body,
 main {
@@ -121,5 +123,21 @@ main {
 	}
 	.prose :where(figcaption) {
 		@apply mt-2 text-sm text-gray-400;
+	}
+
+	/* Unfinished course nodes in graph */
+	#graph-host g.unfinished {
+		opacity: 0.5 !important;
+		cursor: not-allowed !important;
+		filter: blur(0.75px);
+	}
+	#graph-host g.unfinished * {
+		cursor: not-allowed !important;
+	}
+	#graph-host g.unfinished polygon,
+	#graph-host g.unfinished rect,
+	#graph-host g.unfinished ellipse,
+	#graph-host g.unfinished path {
+		pointer-events: all !important;
 	}
 }

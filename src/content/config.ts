@@ -9,6 +9,8 @@ const courses = defineCollection({
 		examples: z.array(z.string()).optional(),
 		dependencies: z.array(reference("courses")).optional(),
 		categories: z.array(z.string()).optional(),
+		unfinished: z.boolean().default(false),
+		tags: z.array(z.string()).default([]),
 	}),
 });
 
