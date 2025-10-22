@@ -8,8 +8,7 @@
 @custom-variant pointer-fine (@media (pointer: fine));
 
 html,
-body,
-main {
+body {
 	overflow-x: hidden;
 }
 

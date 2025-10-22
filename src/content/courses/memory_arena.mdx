@@ -1,0 +1,173 @@
+---
+title: Arena
+description: An arena allocator pre-allocates a large contiguous memory region (an "arena") and doles out small allocations from it very quickly. Individual allocations aren’t freed one-by-one; the whole arena is reset or released at once, which is fast and reduces fragmentation.
+authors:
+  - frank_mayer
+dependencies:
+  - stack
+  - heap
+tags:
+  - Computer Science
+examples:
+  - arena-allocator-c
+---
+
+## Arena Allocators: A Simple Explanation
+
+In computer science, memory management is a fundamental concept. You are likely familiar with the primary memory regions: static, stack, and heap. An arena allocator offers a fourth, powerful strategy that combines some of the best features of the stack and the heap.
+
+### A Quick Refresher: Static, Stack, and Heap
+
+- **Static/Global Memory:** This region holds data whose size is known at compile time and whose lifetime persists for the entire duration of the program (e.g., global variables).
+- **The Stack:** A LIFO (Last-In, First-Out) data structure. It's used for static memory allocation, managing local variables and function calls. Allocation and deallocation are extremely fast—it's just a matter of moving the stack pointer. However, the stack has a limited size, and data on it is ephemeral, lasting only for the duration of a function's execution.
+- **The Heap:** This region is for dynamic memory allocation. You can request blocks of memory of any size at runtime (e.g., with `malloc`) and they persist until you explicitly release them (e.g., with `free`). This provides great flexibility but comes at a cost: `malloc` and `free` can be slow, lead to memory fragmentation, and require careful management to avoid memory leaks.
+
+---
+
+## What is an Arena Allocator?
+
+An arena allocator (also known as a region or bump allocator) is a memory management strategy built on a simple idea:
+
+1.  **Pre-allocate a large, contiguous block of memory.** This block is the "arena."
+2.  **Allocate memory for objects by "bumping" a pointer** forward within that block.
+3.  **Deallocate _all_ objects in the arena at once** by simply resetting the pointer back to the beginning.
+
+This approach gives you a powerful combination of features:
+
+- **Big memory like the heap:** You can pre-allocate a large arena, giving you plenty of space for dynamically created objects that need to outlive a single function call.
+- **Simple and fast like the stack:** Allocating memory is incredibly fast—often just a pointer addition and a bounds check. Deallocation is even faster—a single operation frees everything, regardless of how many objects were allocated.
+
+The arena itself can be allocated from any of the other memory regions. You could use a large global array (static memory), a variable-length array on the stack (for a very temporary arena), or, most commonly, a single large allocation from the heap (e.g., `arena_memory = malloc(HUGE_SIZE);`).
+
+### How It Works: A Visual
+
+Imagine the arena is a long strip of paper and you have a pencil marking your current position.
+
+1.  **Initialization:** The pencil starts at the beginning of the strip.
+    ```
+    [ |................................ ]
+      ^ (pointer)
+    ```
+2.  **Allocation:** To allocate an object, you take the space you need from the current pencil position and move the pencil forward.
+    ```
+    [ obj1 | obj2 |.................... ]
+                    ^ (pointer)
+    ```
+3.  **Deallocation:** You don't erase individual objects. When you're done with _everything_ in the arena, you toss away everything.
+
+    ```
+    [ |................................ ]
+      ^ (pointer)
+    ```
+
+This means that you will need multiple arenas. Each arena should have a tight scope.
+
+You can play around with it here:
+
+import ArenaAllocatorVisualizer from "../../components/preact/arena-visualization";
+
+<div class="ml-[calc(-50vw_+_50%)] w-dvw pb-4">
+	<ArenaAllocatorVisualizer client:load />
+</div>
+
+### Language Context
+
+- **C:** C provides the low-level tools (`malloc`, pointers, `struct`s) to build your own custom allocators. Implementing an arena allocator is a common and effective pattern in high-performance C programs.
+- **Zig:** Modern systems languages like Zig treat memory allocation as a first-class citizen. Zig's standard library provides an `ArenaAllocator` out of the box, and the language makes it easy to pass different allocators to functions, allowing you to choose the best strategy for each specific task.
+
+### Common Use Cases
+
+Arenas are ideal for tasks where you create many objects that all share a similar, well-defined lifetime.
+
+- **Web Server Request Handling:** When a server receives a request, it can create an arena. All memory needed to parse the request, query a database, and build the response is allocated from that arena. Once the response is sent, the entire arena is freed in a single, fast operation.
+- **Game Level Loading:** A game can allocate an arena when a player enters a new level. All the level's assets—models, textures, enemy data—are loaded into it. When the player leaves the level, the arena is instantly cleared, freeing all associated memory without needing to track and free each asset individually.
+- **Compilers:** During compilation, a parser builds an Abstract Syntax Tree (AST). All the nodes of the tree can be placed in an arena. After the semantic analysis phase is complete, the entire AST can be discarded by resetting the arena.
+
+### Example
+
+Here is a full example of how a arena can be used for building a math expression tree.
+
+Trees create many small allocations that are all freed together - perfect for arena allocation.
+
+```c
+#include "arena.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ExprNode {
+  enum { EXPR_NUMBER, EXPR_ADD, EXPR_MULTIPLY } type;
+  union {
+    double number;
+    struct {
+      struct ExprNode *left;
+      struct ExprNode *right;
+    } binary;
+  } data;
+} ExprNode;
+
+ExprNode *make_number(Arena *arena, double value) {
+  ExprNode *node = arena_alloc(arena, sizeof(ExprNode));
+  if (node == NULL)
+    return NULL;
+
+  node->type = EXPR_NUMBER;
+  node->data.number = value;
+  return node;
+}
+
+ExprNode *make_binary_op(Arena *arena, int type, ExprNode *left,
+                         ExprNode *right) {
+  ExprNode *node = arena_alloc(arena, sizeof(ExprNode));
+  if (node == NULL)
+    return NULL;
+
+  node->type = type;
+  node->data.binary.left = left;
+  node->data.binary.right = right;
+  return node;
+}
+
+double evaluate(ExprNode *node) {
+  if (node == NULL)
+    return 0.0;
+
+  switch (node->type) {
+  case EXPR_NUMBER:
+    return node->data.number;
+  case EXPR_ADD:
+    return evaluate(node->data.binary.left) + evaluate(node->data.binary.right);
+  case EXPR_MULTIPLY:
+    return evaluate(node->data.binary.left) * evaluate(node->data.binary.right);
+  default:
+    return 0.0;
+  }
+}
+
+int main(void) {
+  unsigned char stack_buffer[4096];
+  Arena arena = arena_init(stack_buffer, sizeof(stack_buffer));
+
+  printf("Arena initialized with %zu bytes\n", arena.size);
+
+  // Build expression: (2 + 3) * (4 + 5)
+  ExprNode *two = make_number(&arena, 2.0);
+  ExprNode *three = make_number(&arena, 3.0);
+  ExprNode *four = make_number(&arena, 4.0);
+  ExprNode *five = make_number(&arena, 5.0);
+
+  ExprNode *add1 = make_binary_op(&arena, EXPR_ADD, two, three);
+  ExprNode *add2 = make_binary_op(&arena, EXPR_ADD, four, five);
+  ExprNode *multiply = make_binary_op(&arena, EXPR_MULTIPLY, add1, add2);
+
+  printf("Result: %.2f\n", evaluate(multiply));
+  printf("Space used: %zu bytes\n", arena.offset);
+  printf("Space remaining: %zu bytes\n", arena_space_remaining(&arena));
+
+  arena_reset(&arena);
+  printf("\nAfter reset, space remaining: %zu bytes\n",
+         arena_space_remaining(&arena));
+
+  return 0;
+}
+```
