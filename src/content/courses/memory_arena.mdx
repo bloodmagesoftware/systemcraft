@@ -86,7 +86,6 @@ Arenas are ideal for tasks where you create many objects that all share a simila
 ### Example
 
 Here is a full example of how a arena can be used for building a math expression tree.
-
 Trees create many small allocations that are all freed together - perfect for arena allocation.
 
 ```c
@@ -171,3 +170,22 @@ int main(void) {
   return 0;
 }
 ```
+
+## Task
+
+The goal of this assignment is to implement a memory arena allocator. You will create a simple yet powerful memory management system that allows for fast, bulk allocations and deallocations. This will deepen your understanding of memory layout, pointers, and data alignment.
+
+You may use C, C++, Rust, Zig, Odin, or another low-level systems language of your choice.
+
+### API
+
+You must implement the following functions:
+
+- `arena_init`: Initializes an arena with a given memory region and size. Returns an `Arena` struct.
+- `arena_alloc`: Allocates a block of memory from the arena. Returns a pointer to the allocated memory, or `NULL` if the allocation fails.
+- `arena_reset`: Resets the arena to its initial state, freeing all allocated memory.
+- `arena_space_remaining`: Returns the number of bytes remaining in the arena.
+
+Think about how you want to handle an out-of-memory condition.
+Should the arena automatically grow?
+Or should it return/throw an error?
