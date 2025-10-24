@@ -195,34 +195,12 @@ if (m) {
 		</div>
 		<ul class="block pointer-fine:hidden">
 			{
-				courses.map((c) => {
-					const isUnfinished = c.data?.unfinished === true;
-					const tags = c.data?.tags ?? [];
-					return (
-						<li>
-							{isUnfinished ? (
-								<div class="block cursor-not-allowed px-4 py-4 opacity-50">
-									<span class="block text-xl text-cyan-500">
-										{c.data.title}
-									</span>
-									{tags.length > 0 && (
-										<div class="mt-1 flex flex-wrap gap-1.5">
-											{tags.map((tag) => {
-												const hue = tagColorMap.get(tag) ?? 200;
-												return (
-													<span
-														class="rounded-md px-2 py-0.5 text-xs font-medium"
-														style={`background-color: hsl(${hue}, 60%, 25%); color: hsl(${hue}, 70%, 65%);`}
-													>
-														{tag}
-													</span>
-												);
-											})}
-										</div>
-									)}
-									<span class="block text-pretty">{c.data.description}</span>
-								</div>
-							) : (
+				courses
+					.filter((c) => c.data?.unfinished !== true)
+					.map((c) => {
+						const tags = c.data?.tags ?? [];
+						return (
+							<li>
 								<a class="block px-4 py-4" href={`/courses/${c.slug}`}>
 									<span class="block text-xl text-cyan-500 underline">
 										{c.data.title}
@@ -244,10 +222,9 @@ if (m) {
 									)}
 									<span class="block text-pretty">{c.data.description}</span>
 								</a>
-							)}
-						</li>
-					);
-				})
+							</li>
+						);
+					})
 			}
 		</ul>
 	</main>
@@ -312,7 +289,14 @@ if (m) {
 				// Edge title format is "source->target"
 				const match = edgeTitle.match(/^(.+)->(.+)$/);
 				if (match) {
+					const sourceSlug = match[1].trim();
 					const targetSlug = match[2].trim();
+					
+					// Apply unfinished class if either source or target is unfinished
+					if (unfinishedCourses.includes(sourceSlug) || unfinishedCourses.includes(targetSlug)) {
+						edge.classList.add("unfinished");
+					}
+					
 					const hue = courseTagHues[targetSlug];
 					if (hue !== undefined) {
 						// Color edge with lightness between node (65%) and background: ~45%
@@ -439,7 +423,6 @@ if (m) {
 				"wheel",
 				(e) => {
 					e.preventDefault();
-					console.log("wheel deltaY", e.deltaY, "mode", e.deltaMode);
 					scale = clamp(0.1, scale + getScaleDeltaFromWheel(e, scale), 1);
 					svgEl.style.scale = scale.toString();
 				},

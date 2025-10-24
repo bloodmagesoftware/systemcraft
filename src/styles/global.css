@@ -128,7 +128,7 @@ body {
 	#graph-host g.unfinished {
 		opacity: 0.5 !important;
 		cursor: not-allowed !important;
-		filter: blur(0.75px);
+		filter: blur(0.75px) saturate(0.75) opacity(0.5) !important;
 	}
 	#graph-host g.unfinished * {
 		cursor: not-allowed !important;
