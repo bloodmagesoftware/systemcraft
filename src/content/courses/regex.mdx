@@ -1,0 +1,312 @@
+---
+title: Regular Expressions
+description: A regular expression is a pattern of characters that describes a set of text strings. People use these patterns to find, check, or change text quickly in documents and computer programs.
+authors:
+  - frank_mayer
+tags:
+  - Fundamentals
+  - DevOps
+---
+
+import { Regex } from "../../components/preact/regex";
+
+Regular expressions (regex) are patterns that find text. They help you
+search, validate, and transform strings.
+
+Where you will use regex:
+
+- Editors: Visual Studio Code, Visual Studio, Zed, Vim, Emacs
+- Languages: most modern languages include regex engines
+- Terminal tools: `sed`, `grep`, `awk`, `vim`, `emacs`
+- Databases: some, like PostgreSQL, support regex
+
+Regex is everywhere. Learning it pays off.
+
+## Basic text (no special characters)
+
+A pattern matches itself. Example:
+
+- Pattern `hello` matches the text `hello`
+- It does not match `Hello` (case sensitive unless you use the `i` flag)
+
+## `^` and `$` anchors (start and end of line)
+
+- `^` matches the start of a line
+- `$` matches the end of a line
+
+Examples:
+
+- `^hello` matches `hello` only at the start
+- `world$` matches `world` only at the end
+
+In multi-line mode (`m` flag), `^` and `$` work per line.
+
+## `.` any single character
+
+- `.` matches any one character except newline in many engines
+- Some engines have the `s` flag (dotall) so `.` also matches newlines
+
+Example:
+
+- `h.t` matches `hat`, `hot`, `h9t`
+
+## `[]` set of characters
+
+- `[abc]` matches one character that is `a`, `b`, or `c`
+- Example: `gr[ae]y` matches `gray` or `grey`
+
+## `[-]` character range
+
+Use `-` for an inclusive range.
+You can use numbers or letters.
+
+Example:
+
+- `[a-f]` matches `a` through `f`
+- `[0-3]` matches `0` through `3`
+- `[A-Z]` matches `A` through `Z`
+
+Your range can't overlap this three character classes: digits, lowercase letters, uppercase letters.
+This would be invalid: `[g-9]` or `[a-Z]`.
+
+## `[^]` negated set of characters
+
+- `[^abc]` matches one character that is not `a`, `b`, or `c`
+- `[^0-9]` matches a non-digit
+
+Example:
+
+- `gr[^ae]y` matches `grOy` but not `gray` or `grey`
+
+## `()` grouping and `|` alternation (or)
+
+- `()` groups parts so you can apply operators to the group
+- `()` also captures matched text for later use
+- `|` means “or”
+
+Examples:
+
+- `gr(e|a)y` matches `grey` or `gray`
+- `dog|cat` matches `dog` or `cat`
+- `(ha)+` matches `ha`, `hahaha`, etc.
+
+## `{}` counts (quantifiers)
+
+- Exact: `a{3}` matches `aaa`
+- Range: `a{2,4}` matches `aa`, `aaa`, or `aaaa`
+- Minimum: `a{2,}` matches `aa` and more
+- Maximum: some engines support `a{,3}` (max only). Perl/PCRE and JavaScript
+  do not. Use `a{0,3}` instead for portability.
+
+Note: quantifiers apply to the token before them. Use `()` to scope:
+
+- `(ab){3}` repeats `ab` three times
+
+## Escaping with `\`
+
+- To match a special character literally, escape it
+- Example: `\.` matches a literal dot
+- Common specials: `.^$|?*+()[]{}`\`
+
+Example:
+
+- `price\$` matches `price$` at the end of a line
+
+## Optional `?`
+
+- `?` means “zero or one”
+- Example: `colou?r` matches `color` and `colour`
+
+## `+` one or more
+
+- `+` means “one or more”
+- Example: `\d+` matches `1`, `23`, `4567`
+
+## `*` zero or more
+
+- `*` means “zero or more”
+- Example: `go*gle` matches `ggle`, `gogle`, `google`, `gooogle`, etc.
+
+## `\d`, `\w`, `\s` shorthands
+
+- `\d` digit (0–9)
+- `\w` “word” character (letters, digits, underscore)
+- `\s` whitespace (space, tab, newline, etc.)
+
+Example:
+
+- `\w+` matches a word-like token
+- `\d{4}-\d{2}-\d{2}` matches a simple date form
+
+Note: POSIX uses `[[:digit:]]`, `[[:alnum:]]`, `[[:space:]]` instead.
+
+## `\D`, `\W`, `\S` negated shorthands
+
+- `\D` non-digit
+- `\W` non-word character
+- `\S` non-whitespace
+
+Example:
+
+- `\S+` matches a run of non-space characters
+
+## Real-world practice
+
+Put together what you just learned.
+
+Try to write the pattern before opening the solution.
+
+### Match a US ZIP code (5 digits, optional `-4`)
+
+Text examples:
+
+- `94105`
+- `30301-1234`
+
+Don't matche phone numbers:
+
+- `123456789`
+- `1234567890`
+
+<Regex
+	input=""
+	text={[
+		"94105",
+		"30301-1234",
+		"12345-6789",
+		"12345",
+		"1234567890",
+		"123456789",
+	].join("\n")}
+	client:load
+/>
+
+<details>
+	<summary>Solution</summary>
+	<code>{"^\\d{5}(-\\d{4})?$"}</code>
+	<p>5 digits, optional hyphen and 4 digits.</p>
+</details>
+
+### European date
+
+Match the european date format `DD.MM.YYYY` with optional whitespace and leading zeros.
+Don't match US-style dates like `1999-01-01` or other formats.
+
+<Regex
+	input=""
+	text={[
+		"25. 10. 2025",
+		"01.01.1999",
+		"4.9.2008",
+		"01/01/1999",
+		"2024-08-03",
+	].join("\n")}
+	client:load
+/>
+
+<details>
+	<summary>Solution</summary>
+	<p>
+		<code>{"^\\d{1,2}\\.\\s*\\d{1,2}\\.\\s*\\d{4}$"}</code>
+	</p>
+	<p>1-2 digits, dot, 1-2 digits, dot, 4 digits.</p>
+</details>
+
+### Simple email
+
+Text examples:
+
+- `alice@example.com`
+- `bob.smith+tag@sub.domain.org`
+
+<Regex
+	input=""
+	text={[
+		"alice@example.com",
+		"bob.smith+tag@sub.domain.org",
+		"eve@beispiel.de",
+		"just.a.domain.com",
+		"not.a.mail@",
+	].join("\n")}
+	client:load
+/>
+
+<details>
+	<summary>Solution</summary>
+	<p>
+		<code>{"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"}</code>
+	</p>
+	<p>User part, @, domain, dot, TLD with 2+ letters.</p>
+</details>
+
+In the real world, don't use regex to validate an email address.
+A 99% solution (nearly perfect) is <code>{atob("XlthLXowLTkhIyQlJicqKy89P15fYHt8fX4tXSsoPzpcLlthLXowLTkhIyQlJicqKy89P15fYHt8fX4tXSspKkAoPzpbYS16MC05XSg/OlthLXowLTktXSpbYS16MC05XSk/XC4pK1thLXowLTldKD86W2EtejAtOS1dKlthLXowLTldKT8k")}</code>.
+It's super complicated, but still has some cases where its wrong.
+Just make sure it contains an `@` and a `.` and your're fine.
+
+### Hex color `#RGB` or `#RRGGBB`
+
+No alpha.
+
+Text examples:
+
+- `#09f`
+- `#1A2B3C`
+
+Invalid inputs:
+
+- `#1234567890`
+- `#zr4`
+- `#iAZQ8n`
+- `#1234`
+
+<Regex
+	input=""
+	text={["#09f", "#1A2B3C", "#1234567890", "#zr4", "#1AZQ8n", "#1234"].join(
+		"\n",
+	)}
+	client:load
+/>
+
+<details>
+	<summary>Solution</summary>
+	<p>
+		<code>{"^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$"}</code>
+	</p>
+	<p>Either 3 or 6 hex characters 0 to 9 and a to f.</p>
+</details>
+
+## POSIX vs Perl-style (PCRE) regex
+
+Two big families:
+
+- POSIX (BRE/ERE)
+  - Uses character classes like `[[:digit:]]`, `[[:alpha:]]`
+  - Alternation `|` is in ERE (use `egrep` or `grep -E`)
+  - BRE vs ERE differ in what you must escape
+  - Leftmost-longest match rule
+  - Fewer features (no non-greedy `*?`, limited/backreferences)
+- Perl/PCRE (the de facto standard)
+  - Uses `\d`, `\w`, `\s`, groups, lookarounds, lazy quantifiers
+  - Most common in languages and tools today (`PCRE`, JavaScript-inspired)
+  - Behavior is what most tutorials refer to
+
+Note: some features exist only in certain engines (for example, some
+browser versions). Perl/PCRE-style is the most portable default.
+
+### Tips on portability
+
+- Prefer Perl/PCRE-style features for cross-tool consistency
+- Avoid engine-specific extras unless you control the runtime
+- For POSIX tools, use `[[:digit:]]`, `[[:space:]]`, etc.
+- Test patterns in your editor or tool before committing
+
+## Summary
+
+- Build from simple text
+- Use anchors `^` and `$`
+- Use `.` and `[]` to control what you match
+- Group with `()` and choose with `|`
+- Control counts with `{}`, `?`, `+`, `*`
+- Use `\d`, `\w`, `\s` and their opposites for shorthand
+- Check engine docs for small differences (Perl/PCRE is the common base)
